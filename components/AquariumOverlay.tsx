@@ -62,16 +62,16 @@ const Bubble: React.FC = () => {
     const size = useMemo(() => 2 + Math.random() * 4, []);
     const delay = useMemo(() => Math.random() * 20, []);
     const duration = useMemo(() => 8 + Math.random() * 8, []);
-    const initialX = useMemo(() => Math.random() * 350, []);
+    const initialXPercent = useMemo(() => Math.random() * 100, []);
     const drift = useMemo(() => (Math.random() - 0.5) * 30, []);
   
     return (
       <motion.div 
-        initial={{ y: 140, x: initialX, opacity: 0 }} 
-        animate={{ y: -40, x: [initialX, initialX + drift, initialX], opacity: [0, 0.7, 0] }}
+        initial={{ y: 140, opacity: 0 }} 
+        animate={{ y: -40, opacity: [0, 0.7, 0] }}
         transition={{ duration, repeat: Infinity, delay, ease: "linear" }}
         className="absolute bg-white/20 border border-white/40 rounded-full"
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, left: `${initialXPercent}%` }}
       />
     );
 };
@@ -147,9 +147,11 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
   });
 
   useEffect(() => {
+    // Use container width for responsive positioning (default to 350 for SSR)
+    const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
     const initialEntities = Array.from({ length: 14 }).map((_, i): EntityInstance => {
       const trait = ENTITY_TYPES[i % ENTITY_TYPES.length];
-      const startX = 10 + Math.random() * 335;
+      const startX = 10 + Math.random() * (containerWidth - 30);
       const startY = trait.movementStyle === 'scuttle' ? 90 + Math.random() * 5 : 30 + Math.random() * 50;
       
       return { ...trait, id: i, x: startX, y: startY, targetX: startX, targetY: startY, growth: 1.0, aiState: 'wandering', swarmOffset: { x: (Math.random() - 0.5) * 40, y: (Math.random() - 0.5) * 40 } };
@@ -160,7 +162,8 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
   useEffect(() => {
     if (feedTrigger > lastFeedTrigger.current) {
       lastFeedTrigger.current = feedTrigger;
-      const startX = Math.random() > 0.5 ? 40 + Math.random() * 70 : 245 + Math.random() * 70;
+      const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+      const startX = Math.random() > 0.5 ? 40 + Math.random() * 70 : (containerWidth - 115) + Math.random() * 70;
       const newBait: BaitState = { id: Date.now(), x: startX, y: -40, status: 'dropping', motionY: motionValue(-40) };
       setBaits(prev => [...prev, newBait]);
       
@@ -173,9 +176,10 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
   // Fish AI: Wandering behavior
   useEffect(() => {
     const wanderInterval = setInterval(() => {
+      const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
       setEntities(prev => prev.map(e => {
         if (e.aiState === 'wandering' && Math.random() > 0.7) {
-          const nTx = 10 + Math.random() * 335;
+          const nTx = 10 + Math.random() * (containerWidth - 30);
           const nTy = e.movementStyle === 'scuttle' ? 90 + Math.random() * 5 : 30 + Math.random() * 50;
           return { ...e, targetX: nTx, targetY: nTy };
         }
@@ -189,6 +193,8 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
   useEffect(() => {
     const REPEL_STRENGTH = 0.8;
     const separationInterval = setInterval(() => {
+        const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+        const maxX = containerWidth - 15;
         setEntities(currentEntities => {
             const updatedEntities = currentEntities.map(e => ({ ...e }));
 
@@ -211,14 +217,14 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
                         const moveX = (dx / distance) * force * 0.5;
                         const moveY = (dy / distance) * force * 0.5;
                         
-                        const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
+                        const clamp = (val: number, min: number, max: number) => Math.max(min, Math.min(val, max));
 
                         // Apply repulsion to targets
-                        entity1.targetX = clamp(entity1.targetX + moveX, 10, 345);
+                        entity1.targetX = clamp(entity1.targetX + moveX, 10, maxX);
                         const newTargetY1 = entity1.targetY + moveY;
                         entity1.targetY = entity1.movementStyle === 'scuttle' ? clamp(newTargetY1, 90, 95) : clamp(newTargetY1, 30, 85);
 
-                        entity2.targetX = clamp(entity2.targetX - moveX, 10, 345);
+                        entity2.targetX = clamp(entity2.targetX - moveX, 10, maxX);
                         const newTargetY2 = entity2.targetY - moveY;
                         entity2.targetY = entity2.movementStyle === 'scuttle' ? clamp(newTargetY2, 90, 95) : clamp(newTargetY2, 30, 85);
                     }
@@ -276,11 +282,12 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
     }, 500);
 
     // Update entity states after the successful chomp.
+    const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
     setEntities(prev => prev.map(e => {
       if (e.id === entityId) return { ...e, aiState: 'celebrating', growth: e.growth + 0.1 };
       // Other fish that were chasing become confused.
       if (e.aiState === 'chasing') {
-        const newTargetX = 10 + Math.random() * 335;
+        const newTargetX = 10 + Math.random() * (containerWidth - 30);
         const newTargetY = e.movementStyle === 'scuttle' ? 90 + Math.random() * 5 : 30 + Math.random() * 50;
         // Schedule their return to wandering state.
         setTimeout(() => setEntities(current => current.map(en => en.id === e.id ? { ...en, aiState: 'wandering' } : en)), 500 + Math.random() * 300);
