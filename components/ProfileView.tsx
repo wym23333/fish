@@ -294,12 +294,12 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
             </div>
           </div>
 
-          {/* Action Buttons - 10px below stats, Message: 144px, others: 44x44, gap: 4px, no border, rounded-[4px] */}
+          {/* Action Buttons - 10px below stats, Message: 144px, others: 44x44, gap: 4px, no border, rounded-[8px] */}
           <div className="flex items-center gap-[4px] mt-[10px] justify-center pointer-events-auto">
-            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[144px] bg-[#f5f5f5] text-[#161823] rounded-[4px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-[6px] active:scale-95 transition-all">
+            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[144px] bg-[#f5f5f5] text-[#161823] rounded-[8px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-[6px] active:scale-95 transition-all">
               <SendArrowIcon /> Message
             </button>
-            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[8px] flex items-center justify-center active:scale-95 transition-transform">
               {/* User with gear/settings icon */}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -311,7 +311,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
                 <path d="M22 11h-.5" />
               </svg>
             </button>
-            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[8px] flex items-center justify-center active:scale-95 transition-transform">
               <ChevronUp size={20} strokeWidth={2} className="text-[#161823]" />
             </button>
           </div>
@@ -348,8 +348,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
               </div>
             </div>
 
-            {/* Video Grid - 3 columns with small gap */}
-            <div className="grid grid-cols-3 gap-[2px] pb-[400px]">
+            {/* Video Grid - 3 columns with 1.5px gap */}
+            <div className="grid grid-cols-3 gap-[1.5px] pb-[400px]">
               {videoItems.map((item) => (
                 <div key={item.id} className="aspect-[3/4] relative bg-[#f0f0f0] overflow-hidden">
                   <img src={item.url} className="w-full h-full object-cover" alt="Video" />
