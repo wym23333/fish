@@ -228,13 +228,9 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
             </svg>
           </button>
           <button>
-            {/* Share/forward icon - 24x24, matching design */}
+            {/* Share/forward arrow icon - 24x24, matching design */}
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="18" cy="5" r="3" />
-              <circle cx="6" cy="12" r="3" />
-              <circle cx="18" cy="19" r="3" />
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              <path d="M21 12L14 5V9C7 10 4 15 3 20C5.5 16.5 9 14.68 14 14.68V19L21 12Z" />
             </svg>
           </button>
         </div>
@@ -288,44 +284,71 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
             </div>
           </div>
 
-          {/* Action Buttons - 10px below stats, Message: 114px, others: 44x44, gap: 4px */}
+          {/* Action Buttons - 10px below stats, Message button wider, others 44x44, gap: 4px */}
           <div className="flex items-center gap-[4px] mt-[10px] justify-center pointer-events-auto">
-            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[114px] bg-[#f5f5f5] text-[#161823] rounded-[2px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-[4px] active:scale-95 transition-all">
+            <button onClick={() => onNavigate('chat')} className="h-[44px] px-[28px] bg-[#f5f5f5] text-[#161823] rounded-[4px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-[6px] active:scale-95 transition-all border border-[#e8e8e8]">
               <SendArrowIcon /> Message
             </button>
-            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
-              <UserPlus size={20} className="text-[#161823]" />
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform border border-[#e8e8e8]">
+              {/* User with gear/settings icon */}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <circle cx="19" cy="11" r="2.5" />
+                <path d="M19 8.5V8" />
+                <path d="M19 14v-.5" />
+                <path d="M16.5 11H16" />
+                <path d="M22 11h-.5" />
+              </svg>
             </button>
-            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
-              <ChevronUp size={20} className="text-[#161823]" />
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform border border-[#e8e8e8]">
+              <ChevronUp size={20} strokeWidth={2} className="text-[#161823]" />
             </button>
           </div>
         </div>
 
         {/* Content Tabs & Grid */}
-        <div className="flex-1 relative mt-2 bg-white">
+        <div className="flex-1 relative mt-[16px] bg-white">
           <div 
             ref={scrollContainerRef}
             className="h-full overflow-y-auto no-scrollbar"
           >
             {/* Tab Bar */}
-            <div className="flex items-center justify-between px-4 border-b border-[#ebebeb] sticky top-0 bg-white z-[60]">
-              <button className="flex items-center gap-1 py-3 border-b-2 border-[#161823]">
-                <GridIcon />
-                <ChevronDown size={14} className="text-[#161823]" />
-              </button>
-              <button className="py-3 text-[#d8d8d8]">
-                <Repeat2 size={22} />
-              </button>
+            <div className="flex items-center border-b border-[#f0f0f0] sticky top-0 bg-white z-[60]">
+              {/* Left tab - grid icon with dropdown, has active indicator */}
+              <div className="flex-1 flex justify-center">
+                <button className="flex items-center gap-[2px] py-[12px] relative">
+                  <GridIcon />
+                  <ChevronDown size={12} className="text-[#161823]" />
+                  {/* Active indicator line */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40px] h-[2px] bg-[#161823]" />
+                </button>
+              </div>
+              {/* Right tab - repost arrows icon */}
+              <div className="flex-1 flex justify-center">
+                <button className="py-[12px]">
+                  {/* Repost/exchange arrows icon */}
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c8c8c8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 1l4 4-4 4" />
+                    <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                    <path d="M7 23l-4-4 4-4" />
+                    <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            {/* Video Grid */}
-            <div className="grid grid-cols-3 gap-[1px] pb-[400px]">
+            {/* Video Grid - 3 columns with small gap */}
+            <div className="grid grid-cols-3 gap-[2px] pb-[400px]">
               {videoItems.map((item) => (
-                <div key={item.id} className="aspect-[3/4] relative bg-gray-100 overflow-hidden group">
+                <div key={item.id} className="aspect-[3/4] relative bg-[#f0f0f0] overflow-hidden">
                   <img src={item.url} className="w-full h-full object-cover" alt="Video" />
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1 text-white text-[13px] font-semibold drop-shadow-md">
-                    <Play size={12} fill="white" strokeWidth={0} /> {item.views}
+                  {/* Play count overlay */}
+                  <div className="absolute bottom-[8px] left-[8px] flex items-center gap-[4px] text-white text-[13px] font-semibold">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="white" stroke="none">
+                      <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{item.views}</span>
                   </div>
                 </div>
               ))}
