@@ -211,17 +211,22 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
       {/* Top Navigation (fixed) */}
       <motion.div 
         style={{ opacity: headerOpacity }}
-        className="flex items-center justify-between px-3 h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
+        className="flex items-center justify-between px-4 h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
       >
-        <button onClick={() => onNavigate('chat')} className="p-1 hover:bg-black/5 rounded-full transition-colors pointer-events-auto">
-          <ChevronLeft size={26} strokeWidth={2} className="text-[#161823]" />
+        <button onClick={() => onNavigate('chat')} className="hover:bg-black/5 rounded-full transition-colors pointer-events-auto">
+          <ChevronLeft size={28} strokeWidth={1.5} className="text-[#161823]" />
         </button>
-        <div className="flex items-center gap-4 pointer-events-auto">
-          <button className="p-1">
-            <Bell size={24} strokeWidth={1.5} className="text-[#161823]" />
+        <div className="flex items-center gap-5 pointer-events-auto">
+          <button>
+            <Bell size={26} strokeWidth={1.5} className="text-[#161823]" />
           </button>
-          <button className="p-1">
-            <Share2 size={22} strokeWidth={2} className="text-[#161823]" />
+          <button>
+            {/* Share/Forward arrow icon */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
           </button>
         </div>
       </motion.div>
@@ -241,10 +246,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         style={{ y: contentY }}
       >
         {/* Profile Header */}
-        <div className="w-full flex flex-col items-center pt-8 pb-4 shrink-0 pointer-events-none">
-          {/* Avatar - larger circular frame with border */}
-          <div onClick={handleFeedClick} className="relative mb-3 cursor-pointer active:scale-95 transition-transform pointer-events-auto">
-            <div className="w-[96px] h-[96px] rounded-full p-[3px] bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm overflow-hidden">
+        <div className="w-full flex flex-col items-center pt-6 pb-4 shrink-0 pointer-events-none">
+          {/* Avatar - large circular frame matching design */}
+          <div onClick={handleFeedClick} className="relative mb-2 cursor-pointer active:scale-95 transition-transform pointer-events-auto">
+            <div className="w-[110px] h-[110px] rounded-full p-[3px] bg-gradient-to-b from-[#f0f0f0] to-[#e0e0e0] overflow-hidden">
                <img src={friendAvatar} alt="Profile" className="w-full h-full object-cover rounded-full" />
             </div>
           </div>
