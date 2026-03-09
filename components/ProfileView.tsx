@@ -46,6 +46,14 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
   const SLIDE_MAX_BG = 140;
   const SLIDE_MAX_PANEL = 140;
   
+  // Avatar center calculation:
+  // Avatar starts at pt-[81px], avatar height is 96px
+  // Avatar center = 81 + 48 = 129px from top
+  // White panel top will be at SLIDE_MAX_PANEL = 140px
+  // To center avatar on the panel edge: content needs to move (140 - 129) + 48 = 59px
+  // This puts the avatar center at the white panel top edge
+  const CONTENT_SLIDE = 59;
+  
   const springConfig = useMemo(() => ({ stiffness: 450, damping: 45, mass: 0.8 }), []);
   const pullProgress = useMotionValue(0); 
   const springPull = useSpring(pullProgress, springConfig);
@@ -53,10 +61,11 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
   // Parallax transformations
   const backgroundY = useTransform(springPull, [0, 1], [0, SLIDE_MAX_BG]);
   const panelY = useTransform(springPull, [0, 1], [0, SLIDE_MAX_PANEL]);
-  // Final content Y is calculated to center the avatar (position 74px from top) on the dividing line (140px)
-  // So, 140 - 74 = 66
-  const contentY = useTransform(springPull, [0, 1], [0, 66]);
+  // Content moves to position avatar center at the white panel top edge
+  const contentY = useTransform(springPull, [0, 1], [0, CONTENT_SLIDE]);
   const headerOpacity = useTransform(springPull, [0, 0.3], [1, 0]);
+  // Border radius only appears when pulling down
+  const panelBorderRadius = useTransform(springPull, [0, 0.1], [0, 24]);
 
 
   useMotionValueEvent(springPull, "change", (latest) => {
@@ -238,8 +247,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
 
       {/* 2. Middle Layer: White Background Panel (moves slower than background) */}
       <motion.div 
-        className="absolute top-0 left-0 right-0 bottom-[-500px] z-10 bg-white rounded-t-[24px] pointer-events-none"
-        style={{ y: panelY }}
+        className="absolute top-0 left-0 right-0 bottom-[-500px] z-10 bg-white pointer-events-none"
+        style={{ y: panelY, borderTopLeftRadius: panelBorderRadius, borderTopRightRadius: panelBorderRadius }}
       />
 
       {/* 3. Top Layer: Profile Content (moves slowest) */}
