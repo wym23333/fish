@@ -208,28 +208,28 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         )}
       </AnimatePresence>
 
-      {/* Top Navigation (fixed) - icons 24x24pt, padding 16pt, gap 16pt */}
+      {/* Top Navigation (fixed) - icons 24x24, padding 16px, gap 16px */}
       <motion.div 
         style={{ opacity: headerOpacity }}
-        className="flex items-center justify-between px-[16pt] h-[44pt] shrink-0 z-[120] absolute top-[44pt] left-0 right-0 pointer-events-none"
+        className="flex items-center justify-between px-[16px] h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
       >
         <button onClick={() => onNavigate('chat')} className="hover:bg-black/5 rounded-full transition-colors pointer-events-auto">
-          {/* Back arrow - 24x24pt, strokeWidth 2 */}
-          <svg width="24pt" height="24pt" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {/* Back arrow - 24x24 */}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
-        <div className="flex items-center gap-[16pt] pointer-events-auto">
+        <div className="flex items-center gap-[16px] pointer-events-auto">
           <button>
-            {/* Bell icon - 24x24pt, strokeWidth 2 */}
-            <svg width="24pt" height="24pt" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Bell icon - 24x24 */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
               <path d="M13.73 21a2 2 0 0 1-3.46 0" />
             </svg>
           </button>
           <button>
-            {/* Share icon - 24x24pt, strokeWidth 2 */}
-            <svg width="24pt" height="24pt" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            {/* Share icon - 24x24 */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
               <polyline points="16 6 12 2 8 6" />
               <line x1="12" y1="2" x2="12" y2="15" />
@@ -252,49 +252,49 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         className="flex-1 relative z-20 flex flex-col overflow-hidden bg-transparent"
         style={{ y: contentY }}
       >
-        {/* Profile Header - status bar (44pt) + 37pt = 81pt from top */}
-        <div className="w-full flex flex-col items-center pt-[81pt] shrink-0 pointer-events-none">
-          {/* Avatar - 96x96pt, no border/stroke */}
+        {/* Profile Header - status bar (44px) + 37px = 81px from top */}
+        <div className="w-full flex flex-col items-center pt-[81px] shrink-0 pointer-events-none">
+          {/* Avatar - 96x96, no border/stroke */}
           <div onClick={handleFeedClick} className="relative cursor-pointer active:scale-95 transition-transform pointer-events-auto">
-            <div className="w-[96pt] h-[96pt] rounded-full overflow-hidden">
+            <div className="w-[96px] h-[96px] rounded-full overflow-hidden">
                <img src={friendAvatar} alt="Profile" className="w-full h-full object-cover" />
             </div>
           </div>
 
-          {/* Username - 10pt below avatar, 18pt font, 130% line-height */}
-          <h1 className="text-[18pt] leading-[130%] font-bold text-[#161823] mt-[10pt]">esther</h1>
-          {/* Account ID - 13pt font, 130% line-height */}
-          <div className="text-[13pt] leading-[130%] text-[#8a8b91]">@estherl0831</div>
+          {/* Username - 10px below avatar, 18px font, 130% line-height */}
+          <h1 className="text-[18px] leading-[130%] font-bold text-[#161823] mt-[10px]">esther</h1>
+          {/* Account ID - 13px font, 130% line-height */}
+          <div className="text-[13px] leading-[130%] text-[#8a8b91]">@estherl0831</div>
 
-          {/* Stats Row - 10pt below username area, 45pt padding on sides */}
-          <div className="flex justify-center items-center mt-[10pt] w-full px-[45pt]">
+          {/* Stats Row - 10px below username area, 45px padding on sides */}
+          <div className="flex justify-center items-center mt-[10px] w-full px-[45px]">
             <div className="flex items-center w-full">
               <div className="flex-1 text-center">
-                <div className="font-bold text-[17pt] leading-[130%] text-[#161823]">264</div>
-                <div className="text-[#8a8b91] text-[13pt] leading-[130%]">Following</div>
+                <div className="font-bold text-[17px] leading-[130%] text-[#161823]">264</div>
+                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Following</div>
               </div>
-              <div className="w-[1pt] h-[12pt] bg-[#e1e1e1]" />
+              <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
               <div className="flex-1 text-center">
-                <div className="font-bold text-[17pt] leading-[130%] text-[#161823]">101</div>
-                <div className="text-[#8a8b91] text-[13pt] leading-[130%]">Followers</div>
+                <div className="font-bold text-[17px] leading-[130%] text-[#161823]">101</div>
+                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Followers</div>
               </div>
-              <div className="w-[1pt] h-[12pt] bg-[#e1e1e1]" />
+              <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
               <div className="flex-1 text-center">
-                <div className="font-bold text-[17pt] leading-[130%] text-[#161823]">1,982</div>
-                <div className="text-[#8a8b91] text-[13pt] leading-[130%]">Likes</div>
+                <div className="font-bold text-[17px] leading-[130%] text-[#161823]">1,982</div>
+                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Likes</div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons - 10pt below stats, Message: 114pt, others: 44x44pt, gap: 4pt */}
-          <div className="flex items-center gap-[4pt] mt-[10pt] justify-center pointer-events-auto">
-            <button onClick={() => onNavigate('chat')} className="h-[44pt] w-[114pt] bg-[#f5f5f5] text-[#161823] rounded-[2pt] font-semibold text-[15pt] leading-[130%] flex items-center justify-center gap-[4pt] active:scale-95 transition-all">
+          {/* Action Buttons - 10px below stats, Message: 114px, others: 44x44, gap: 4px */}
+          <div className="flex items-center gap-[4px] mt-[10px] justify-center pointer-events-auto">
+            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[114px] bg-[#f5f5f5] text-[#161823] rounded-[2px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-[4px] active:scale-95 transition-all">
               <SendArrowIcon /> Message
             </button>
-            <button className="w-[44pt] h-[44pt] bg-[#f5f5f5] rounded-[2pt] flex items-center justify-center active:scale-95 transition-transform">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
               <UserPlus size={20} className="text-[#161823]" />
             </button>
-            <button className="w-[44pt] h-[44pt] bg-[#f5f5f5] rounded-[2pt] flex items-center justify-center active:scale-95 transition-transform">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
               <ChevronUp size={20} className="text-[#161823]" />
             </button>
           </div>
