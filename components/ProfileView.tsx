@@ -50,9 +50,10 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
   // Avatar starts at pt-[81px], avatar height is 96px
   // Avatar center = 81 + 48 = 129px from top
   // White panel top will be at SLIDE_MAX_PANEL = 140px
-  // To center avatar on the panel edge: content needs to move (140 - 129) + 48 = 59px
-  // This puts the avatar center at the white panel top edge
-  const CONTENT_SLIDE = 59;
+  // To center avatar ON the panel edge (half above, half below):
+  // Content needs to move so avatar center aligns with panel top
+  // 129 + CONTENT_SLIDE = 140 => CONTENT_SLIDE = 11px
+  const CONTENT_SLIDE = 11;
   
   const springConfig = useMemo(() => ({ stiffness: 450, damping: 45, mass: 0.8 }), []);
   const pullProgress = useMotionValue(0); 
