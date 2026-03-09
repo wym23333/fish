@@ -245,8 +245,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         className="flex-1 relative z-20 flex flex-col overflow-hidden bg-transparent"
         style={{ y: contentY }}
       >
-        {/* Profile Header - total height 247px, top margin 37pt from status bar */}
-        <div className="w-full flex flex-col items-center pt-[37px] h-[247px] shrink-0 pointer-events-none">
+        {/* Profile Header - top margin 37pt from status bar */}
+        <div className="w-full flex flex-col items-center pt-[37px] shrink-0 pointer-events-none">
           {/* Avatar - 96x96, no border/stroke */}
           <div onClick={handleFeedClick} className="relative cursor-pointer active:scale-95 transition-transform pointer-events-auto">
             <div className="w-[96px] h-[96px] rounded-full overflow-hidden">
