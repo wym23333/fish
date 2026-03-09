@@ -245,50 +245,51 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         className="flex-1 relative z-20 flex flex-col overflow-hidden bg-transparent"
         style={{ y: contentY }}
       >
-        {/* Profile Header */}
-        <div className="w-full flex flex-col items-center pt-6 pb-4 shrink-0 pointer-events-none">
-          {/* Avatar - large circular frame matching design */}
-          <div onClick={handleFeedClick} className="relative mb-2 cursor-pointer active:scale-95 transition-transform pointer-events-auto">
-            <div className="w-[110px] h-[110px] rounded-full p-[3px] bg-gradient-to-b from-[#f0f0f0] to-[#e0e0e0] overflow-hidden">
-               <img src={friendAvatar} alt="Profile" className="w-full h-full object-cover rounded-full" />
+        {/* Profile Header - total height 247px, top margin 37pt from status bar */}
+        <div className="w-full flex flex-col items-center pt-[37px] h-[247px] shrink-0 pointer-events-none">
+          {/* Avatar - 96x96, no border/stroke */}
+          <div onClick={handleFeedClick} className="relative cursor-pointer active:scale-95 transition-transform pointer-events-auto">
+            <div className="w-[96px] h-[96px] rounded-full overflow-hidden">
+               <img src={friendAvatar} alt="Profile" className="w-full h-full object-cover" />
             </div>
           </div>
 
-          {/* Username */}
-          <h1 className="text-[17px] font-bold text-[#161823] tracking-tight leading-tight">esther</h1>
-          <div className="text-[14px] text-[#979797] mt-0.5">
+          {/* Username - 10pt below avatar, 18px font */}
+          <h1 className="text-[18px] font-bold text-[#161823] mt-[10px]">esther</h1>
+          {/* Account ID - 13px font */}
+          <div className="text-[13px] text-[#8a8b91]">
             @estherl0831
           </div>
 
-          {/* Stats Row with dividers */}
-          <div className="flex justify-center items-center mt-5 w-full">
-            <div className="flex items-center">
-              <div className="text-center min-w-[80px]">
-                <div className="font-bold text-[18px] text-[#161823]">264</div>
+          {/* Stats Row - 10pt below username area, 45px padding on sides */}
+          <div className="flex justify-center items-center mt-[10px] w-full px-[45px]">
+            <div className="flex items-center w-full">
+              <div className="flex-1 text-center">
+                <div className="font-bold text-[17px] text-[#161823]">264</div>
                 <div className="text-[#8a8b91] text-[13px]">Following</div>
               </div>
               <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
-              <div className="text-center min-w-[80px]">
-                <div className="font-bold text-[18px] text-[#161823]">101</div>
+              <div className="flex-1 text-center">
+                <div className="font-bold text-[17px] text-[#161823]">101</div>
                 <div className="text-[#8a8b91] text-[13px]">Followers</div>
               </div>
               <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
-              <div className="text-center min-w-[80px]">
-                <div className="font-bold text-[18px] text-[#161823]">1,982</div>
+              <div className="flex-1 text-center">
+                <div className="font-bold text-[17px] text-[#161823]">1,982</div>
                 <div className="text-[#8a8b91] text-[13px]">Likes</div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-[6px] mt-5 w-full justify-center pointer-events-auto">
-            <button onClick={() => onNavigate('chat')} className="h-[46px] w-[170px] bg-[#f5f5f5] text-[#161823] rounded-[2px] font-semibold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-all">
+          {/* Action Buttons - 10pt below stats, Message: 114px, others: 44x44, gap: 4pt */}
+          <div className="flex items-center gap-[4px] mt-[10px] justify-center pointer-events-auto">
+            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[114px] bg-[#f5f5f5] text-[#161823] rounded-[2px] font-semibold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-all">
               <SendArrowIcon /> Message
             </button>
-            <button className="w-[46px] h-[46px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
               <UserPlus size={20} className="text-[#161823]" />
             </button>
-            <button className="w-[46px] h-[46px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
               <ChevronUp size={20} className="text-[#161823]" />
             </button>
           </div>
