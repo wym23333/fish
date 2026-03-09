@@ -208,21 +208,28 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         )}
       </AnimatePresence>
 
-      {/* Top Navigation (fixed) */}
+      {/* Top Navigation (fixed) - icons 24x24, padding 16pt, gap 16pt */}
       <motion.div 
         style={{ opacity: headerOpacity }}
-        className="flex items-center justify-between px-4 h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
+        className="flex items-center justify-between px-[16px] h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
       >
         <button onClick={() => onNavigate('chat')} className="hover:bg-black/5 rounded-full transition-colors pointer-events-auto">
-          <ChevronLeft size={28} strokeWidth={1.5} className="text-[#161823]" />
+          {/* Back arrow - 24x24, strokeWidth 2 */}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </button>
-        <div className="flex items-center gap-5 pointer-events-auto">
+        <div className="flex items-center gap-[16px] pointer-events-auto">
           <button>
-            <Bell size={26} strokeWidth={1.5} className="text-[#161823]" />
+            {/* Bell icon - 24x24, strokeWidth 2 */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
           </button>
           <button>
-            {/* Share/Forward arrow icon */}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            {/* Share icon - 24x24, strokeWidth 2 */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
               <polyline points="16 6 12 2 8 6" />
               <line x1="12" y1="2" x2="12" y2="15" />
