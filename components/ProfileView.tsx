@@ -254,36 +254,34 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
             </div>
           </div>
 
-          {/* Username - 10pt below avatar, 18px font */}
-          <h1 className="text-[18px] font-bold text-[#161823] mt-[10px]">esther</h1>
-          {/* Account ID - 13px font */}
-          <div className="text-[13px] text-[#8a8b91]">
-            @estherl0831
-          </div>
+          {/* Username - 10pt below avatar, 18px font, 130% line-height */}
+          <h1 className="text-[18px] leading-[130%] font-bold text-[#161823] mt-[10px]">esther</h1>
+          {/* Account ID - 13px font, 130% line-height */}
+          <div className="text-[13px] leading-[130%] text-[#8a8b91]">@estherl0831</div>
 
           {/* Stats Row - 10pt below username area, 45px padding on sides */}
           <div className="flex justify-center items-center mt-[10px] w-full px-[45px]">
             <div className="flex items-center w-full">
               <div className="flex-1 text-center">
-                <div className="font-bold text-[17px] text-[#161823]">264</div>
-                <div className="text-[#8a8b91] text-[13px]">Following</div>
+                <div className="font-bold text-[17px] leading-[130%] text-[#161823]">264</div>
+                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Following</div>
               </div>
               <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
               <div className="flex-1 text-center">
-                <div className="font-bold text-[17px] text-[#161823]">101</div>
-                <div className="text-[#8a8b91] text-[13px]">Followers</div>
+                <div className="font-bold text-[17px] leading-[130%] text-[#161823]">101</div>
+                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Followers</div>
               </div>
               <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
               <div className="flex-1 text-center">
-                <div className="font-bold text-[17px] text-[#161823]">1,982</div>
-                <div className="text-[#8a8b91] text-[13px]">Likes</div>
+                <div className="font-bold text-[17px] leading-[130%] text-[#161823]">1,982</div>
+                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Likes</div>
               </div>
             </div>
           </div>
 
           {/* Action Buttons - 10pt below stats, Message: 114px, others: 44x44, gap: 4pt */}
           <div className="flex items-center gap-[4px] mt-[10px] justify-center pointer-events-auto">
-            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[114px] bg-[#f5f5f5] text-[#161823] rounded-[2px] font-semibold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-all">
+            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[114px] bg-[#f5f5f5] text-[#161823] rounded-[2px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-2 active:scale-95 transition-all">
               <SendArrowIcon /> Message
             </button>
             <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
