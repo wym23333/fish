@@ -1,10 +1,26 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { ChevronLeft, Bell, Share2, CheckCircle2, UserPlus, Grid3X3, RotateCcw, Play, SendHorizontal, ChevronUp } from 'lucide-react';
-// FIX: Corrected typo from Anisotransition to AnimatePresence.
+import { ChevronLeft, Bell, Share2, UserPlus, ChevronDown, Play, ChevronUp, Repeat2 } from 'lucide-react';
 import { motion, useMotionValue, useSpring, useTransform, animate, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Page } from '../types';
 import AquariumOverlay from './AquariumOverlay';
+
+// Grid icon component matching the design
+const GridIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="4" y1="4" x2="4" y2="16" />
+    <line x1="10" y1="4" x2="10" y2="16" />
+    <line x1="16" y1="4" x2="16" y2="16" />
+  </svg>
+);
+
+// Send/Arrow icon for message button
+const SendArrowIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 2L11 13" />
+    <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+  </svg>
+);
 
 interface ProfileViewProps {
   onNavigate: (page: Page) => void;
@@ -14,7 +30,8 @@ interface ProfileViewProps {
 }
 
 const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, isHungry, onFeedComplete }) => {
-  const friendAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&q=80";
+  // Avatar image - two people in a circular frame
+  const friendAvatar = "https://images.unsplash.com/photo-1523264939339-c89f9dadde2e?w=400&h=400&fit=crop&q=80";
   
   const [isAquariumMode, setIsAquariumMode] = useState(false);
   const [feedTrigger, setFeedTrigger] = useState(0);
@@ -124,11 +141,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
     animate(pullProgress, 0, springConfig);
   };
 
-  const videoItems = useMemo(() => Array.from({ length: 9 }).map((_, i) => ({
-    id: i,
-    views: Math.floor(Math.random() * 200) + 'K',
-    url: `https://picsum.photos/seed/${i + 80}/400/600`
-  })), []);
+  // Video items with view counts matching the design
+  const videoItems = useMemo(() => [
+    { id: 0, views: '882', url: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=400&h=600&fit=crop&q=80' },
+    { id: 1, views: '1813', url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=600&fit=crop&q=80' },
+    { id: 2, views: '2136', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop&q=80' },
+    { id: 3, views: '2790', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=600&fit=crop&q=80' },
+    { id: 4, views: '3408', url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=600&fit=crop&q=80' },
+    { id: 5, views: '3573', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop&q=80' },
+    { id: 6, views: '1.2K', url: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400&h=600&fit=crop&q=80' },
+    { id: 7, views: '2.5K', url: 'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=400&h=600&fit=crop&q=80' },
+    { id: 8, views: '4.1K', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop&q=80' },
+  ], []);
 
   return (
     <div className="flex flex-col h-full relative touch-none overflow-hidden bg-white">
@@ -187,14 +211,18 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
       {/* Top Navigation (fixed) */}
       <motion.div 
         style={{ opacity: headerOpacity }}
-        className="flex items-center justify-between px-4 h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
+        className="flex items-center justify-between px-3 h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
       >
         <button onClick={() => onNavigate('chat')} className="p-1 hover:bg-black/5 rounded-full transition-colors pointer-events-auto">
-          <ChevronLeft size={28} strokeWidth={2.5} className="text-[#161823]" />
+          <ChevronLeft size={26} strokeWidth={2} className="text-[#161823]" />
         </button>
-        <div className="flex items-center gap-5 pr-1 pointer-events-auto">
-          <Bell size={24} strokeWidth={2.5} className="text-[#161823]" />
-          <Share2 size={24} strokeWidth={2.5} className="text-[#161823]" />
+        <div className="flex items-center gap-4 pointer-events-auto">
+          <button className="p-1">
+            <Bell size={24} strokeWidth={1.5} className="text-[#161823]" />
+          </button>
+          <button className="p-1">
+            <Share2 size={22} strokeWidth={2} className="text-[#161823]" />
+          </button>
         </div>
       </motion.div>
 
@@ -214,69 +242,77 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
       >
         {/* Profile Header */}
         <div className="w-full flex flex-col items-center pt-8 pb-4 shrink-0 pointer-events-none">
-          {/* Avatar */}
-          <div onClick={handleFeedClick} className="relative mb-2.5 cursor-pointer active:scale-95 transition-transform pointer-events-auto">
-            <div className="w-[84px] h-[84px] rounded-full p-[2px] border-2 border-gray-50 bg-white shadow-lg overflow-hidden">
+          {/* Avatar - larger circular frame with border */}
+          <div onClick={handleFeedClick} className="relative mb-3 cursor-pointer active:scale-95 transition-transform pointer-events-auto">
+            <div className="w-[96px] h-[96px] rounded-full p-[3px] bg-gradient-to-b from-gray-100 to-gray-200 shadow-sm overflow-hidden">
                <img src={friendAvatar} alt="Profile" className="w-full h-full object-cover rounded-full" />
             </div>
           </div>
 
-          <h1 className="text-xl font-bold text-[#161823] tracking-tight leading-tight">Chujie</h1>
-          <div className="flex items-center gap-1.5 text-sm font-medium text-[#161823]/40 mt-1">
-            <span>@zhangchujie</span>
-            <CheckCircle2 size={12} fill="#00BFFF" color="white" />
+          {/* Username */}
+          <h1 className="text-[17px] font-bold text-[#161823] tracking-tight leading-tight">esther</h1>
+          <div className="text-[14px] text-[#979797] mt-0.5">
+            @estherl0831
           </div>
 
-          {/* Stats & Actions */}
-          <div className="px-6 w-full mt-6">
-            <div className="flex justify-center items-center gap-10 mb-6 w-full">
-              <div className="text-center">
-                <div className="font-bold text-[18px] text-[#161823]">38</div>
-                <div className="text-[#161823]/30 text-[9px] uppercase font-bold tracking-[0.18em]">Following</div>
+          {/* Stats Row with dividers */}
+          <div className="flex justify-center items-center mt-4 w-full">
+            <div className="flex items-center">
+              <div className="text-center px-5">
+                <div className="font-bold text-[17px] text-[#161823]">264</div>
+                <div className="text-[#979797] text-[12px]">Following</div>
               </div>
-              <div className="text-center">
-                <div className="font-bold text-[18px] text-[#161823]">2,598</div>
-                <div className="text-[#161823]/30 text-[9px] uppercase font-bold tracking-[0.18em]">Followers</div>
+              <div className="w-[1px] h-[14px] bg-[#d8d8d8]" />
+              <div className="text-center px-5">
+                <div className="font-bold text-[17px] text-[#161823]">101</div>
+                <div className="text-[#979797] text-[12px]">Followers</div>
               </div>
-              <div className="text-center">
-                <div className="font-bold text-[18px] text-[#161823]">509K</div>
-                <div className="text-[#161823]/30 text-[9px] uppercase font-bold tracking-[0.18em]">Likes</div>
+              <div className="w-[1px] h-[14px] bg-[#d8d8d8]" />
+              <div className="text-center px-5">
+                <div className="font-bold text-[17px] text-[#161823]">1,982</div>
+                <div className="text-[#979797] text-[12px]">Likes</div>
               </div>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2 w-full pointer-events-auto">
-              <button onClick={() => onNavigate('chat')} className="flex-1 h-11 bg-[#fe2c55] text-white rounded-lg font-bold flex items-center justify-center gap-2 active:scale-95 transition-all">
-                <SendHorizontal size={18} className="-rotate-45" /> Message
-              </button>
-              <button className="w-11 h-11 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 active:scale-95 transition-transform">
-                <UserPlus size={20} className="text-[#161823]" />
-              </button>
-            </div>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1.5 mt-4 px-6 w-full justify-center pointer-events-auto">
+            <button onClick={() => onNavigate('chat')} className="h-[42px] px-10 bg-[#f6f6f6] text-[#161823] rounded-[4px] font-semibold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-all border border-[#ebebeb]">
+              <SendArrowIcon /> Message
+            </button>
+            <button className="w-[42px] h-[42px] bg-[#f6f6f6] rounded-[4px] flex items-center justify-center border border-[#ebebeb] active:scale-95 transition-transform">
+              <UserPlus size={18} className="text-[#161823]" />
+            </button>
+            <button className="w-[42px] h-[42px] bg-[#f6f6f6] rounded-[4px] flex items-center justify-center border border-[#ebebeb] active:scale-95 transition-transform">
+              <ChevronDown size={18} className="text-[#161823] rotate-180" />
+            </button>
           </div>
         </div>
 
         {/* Content Tabs & Grid */}
-        <div className="flex-1 relative mt-1 bg-white">
+        <div className="flex-1 relative mt-2 bg-white">
           <div 
             ref={scrollContainerRef}
             className="h-full overflow-y-auto no-scrollbar"
           >
-            <div className="flex border-b border-gray-100 sticky top-0 bg-white z-[60]">
-              <button className="flex-1 py-4 flex justify-center border-b-2 border-black">
-                <Grid3X3 size={22} className="text-black" />
+            {/* Tab Bar */}
+            <div className="flex items-center justify-between px-4 border-b border-[#ebebeb] sticky top-0 bg-white z-[60]">
+              <button className="flex items-center gap-1 py-3 border-b-2 border-[#161823]">
+                <GridIcon />
+                <ChevronDown size={14} className="text-[#161823]" />
               </button>
-              <button className="flex-1 py-4 flex justify-center text-gray-200">
-                <RotateCcw size={22} />
+              <button className="py-3 text-[#d8d8d8]">
+                <Repeat2 size={22} />
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-[1px] bg-gray-50 pb-[400px]">
+            {/* Video Grid */}
+            <div className="grid grid-cols-3 gap-[1px] pb-[400px]">
               {videoItems.map((item) => (
-                <div key={item.id} className="aspect-[3/4] relative bg-gray-200 overflow-hidden group">
+                <div key={item.id} className="aspect-[3/4] relative bg-gray-100 overflow-hidden group">
                   <img src={item.url} className="w-full h-full object-cover" alt="Video" />
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1 text-white text-[11px] font-bold drop-shadow-sm">
-                    <Play size={10} fill="white" strokeWidth={0} /> {item.views}
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 text-white text-[13px] font-semibold drop-shadow-md">
+                    <Play size={12} fill="white" strokeWidth={0} /> {item.views}
                   </div>
                 </div>
               ))}
