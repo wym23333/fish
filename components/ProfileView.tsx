@@ -224,22 +224,22 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         className="flex items-center justify-between px-[16px] h-[44px] shrink-0 z-[120] absolute top-[44px] left-0 right-0 pointer-events-none"
       >
         <button onClick={() => onNavigate('chat')} className="hover:bg-black/5 rounded-full transition-colors pointer-events-auto">
-          {/* Back arrow - 24x24 */}
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          {/* Back arrow - 24x24, strokeWidth 2 */}
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
         <div className="flex items-center gap-[16px] pointer-events-auto">
           <button>
-            {/* Bell icon - 24x24, outline style matching design */}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            {/* Bell icon - smaller viewBox to match visual weight, strokeWidth 2 */}
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 9.33A7 7 0 0 0 7 9.33c0 8.17-3.5 10.5-3.5 10.5h21s-3.5-2.33-3.5-10.5" />
+              <path d="M16 23.33a2.33 2.33 0 0 1-4.04 0" />
             </svg>
           </button>
           <button>
-            {/* Share/forward arrow icon - 24x24, matching design */}
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            {/* Share/forward arrow icon - 24x24, strokeWidth 2 */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 12L14 5V9C7 10 4 15 3 20C5.5 16.5 9 14.68 14 14.68V19L21 12Z" />
             </svg>
           </button>
@@ -279,29 +279,29 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
             <div className="flex items-center w-full">
               <div className="flex-1 text-center">
                 <div className="font-bold text-[17px] leading-[130%] text-[#161823]">264</div>
-                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Following</div>
+                <div className="text-[#8a8b91] text-[12px] leading-[130%]">Following</div>
               </div>
               <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
               <div className="flex-1 text-center">
                 <div className="font-bold text-[17px] leading-[130%] text-[#161823]">101</div>
-                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Followers</div>
+                <div className="text-[#8a8b91] text-[12px] leading-[130%]">Followers</div>
               </div>
               <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
               <div className="flex-1 text-center">
                 <div className="font-bold text-[17px] leading-[130%] text-[#161823]">1,982</div>
-                <div className="text-[#8a8b91] text-[13px] leading-[130%]">Likes</div>
+                <div className="text-[#8a8b91] text-[12px] leading-[130%]">Likes</div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons - 10px below stats, Message button wider, others 44x44, gap: 4px */}
+          {/* Action Buttons - 10px below stats, Message: 144px, others: 44x44, gap: 4px, no border, rounded-[4px] */}
           <div className="flex items-center gap-[4px] mt-[10px] justify-center pointer-events-auto">
-            <button onClick={() => onNavigate('chat')} className="h-[44px] px-[28px] bg-[#f5f5f5] text-[#161823] rounded-[4px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-[6px] active:scale-95 transition-all border border-[#e8e8e8]">
+            <button onClick={() => onNavigate('chat')} className="h-[44px] w-[144px] bg-[#f5f5f5] text-[#161823] rounded-[4px] font-semibold text-[15px] leading-[130%] flex items-center justify-center gap-[6px] active:scale-95 transition-all">
               <SendArrowIcon /> Message
             </button>
-            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform border border-[#e8e8e8]">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform">
               {/* User with gear/settings icon */}
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
                 <circle cx="19" cy="11" r="2.5" />
@@ -311,7 +311,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
                 <path d="M22 11h-.5" />
               </svg>
             </button>
-            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform border border-[#e8e8e8]">
+            <button className="w-[44px] h-[44px] bg-[#f5f5f5] rounded-[4px] flex items-center justify-center active:scale-95 transition-transform">
               <ChevronUp size={20} strokeWidth={2} className="text-[#161823]" />
             </button>
           </div>
