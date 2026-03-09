@@ -261,35 +261,35 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
           </div>
 
           {/* Stats Row with dividers */}
-          <div className="flex justify-center items-center mt-4 w-full">
+          <div className="flex justify-center items-center mt-5 w-full">
             <div className="flex items-center">
-              <div className="text-center px-5">
-                <div className="font-bold text-[17px] text-[#161823]">264</div>
-                <div className="text-[#979797] text-[12px]">Following</div>
+              <div className="text-center min-w-[80px]">
+                <div className="font-bold text-[18px] text-[#161823]">264</div>
+                <div className="text-[#8a8b91] text-[13px]">Following</div>
               </div>
-              <div className="w-[1px] h-[14px] bg-[#d8d8d8]" />
-              <div className="text-center px-5">
-                <div className="font-bold text-[17px] text-[#161823]">101</div>
-                <div className="text-[#979797] text-[12px]">Followers</div>
+              <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
+              <div className="text-center min-w-[80px]">
+                <div className="font-bold text-[18px] text-[#161823]">101</div>
+                <div className="text-[#8a8b91] text-[13px]">Followers</div>
               </div>
-              <div className="w-[1px] h-[14px] bg-[#d8d8d8]" />
-              <div className="text-center px-5">
-                <div className="font-bold text-[17px] text-[#161823]">1,982</div>
-                <div className="text-[#979797] text-[12px]">Likes</div>
+              <div className="w-[1px] h-[12px] bg-[#e1e1e1]" />
+              <div className="text-center min-w-[80px]">
+                <div className="font-bold text-[18px] text-[#161823]">1,982</div>
+                <div className="text-[#8a8b91] text-[13px]">Likes</div>
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1.5 mt-4 px-6 w-full justify-center pointer-events-auto">
-            <button onClick={() => onNavigate('chat')} className="h-[42px] px-10 bg-[#f6f6f6] text-[#161823] rounded-[4px] font-semibold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-all border border-[#ebebeb]">
+          <div className="flex items-center gap-[6px] mt-5 w-full justify-center pointer-events-auto">
+            <button onClick={() => onNavigate('chat')} className="h-[46px] w-[170px] bg-[#f5f5f5] text-[#161823] rounded-[2px] font-semibold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-all">
               <SendArrowIcon /> Message
             </button>
-            <button className="w-[42px] h-[42px] bg-[#f6f6f6] rounded-[4px] flex items-center justify-center border border-[#ebebeb] active:scale-95 transition-transform">
-              <UserPlus size={18} className="text-[#161823]" />
+            <button className="w-[46px] h-[46px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
+              <UserPlus size={20} className="text-[#161823]" />
             </button>
-            <button className="w-[42px] h-[42px] bg-[#f6f6f6] rounded-[4px] flex items-center justify-center border border-[#ebebeb] active:scale-95 transition-transform">
-              <ChevronDown size={18} className="text-[#161823] rotate-180" />
+            <button className="w-[46px] h-[46px] bg-[#f5f5f5] rounded-[2px] flex items-center justify-center active:scale-95 transition-transform">
+              <ChevronUp size={20} className="text-[#161823]" />
             </button>
           </div>
         </div>
