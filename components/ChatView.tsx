@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ChevronLeft, Flag, MoreHorizontal, Camera, Image as ImageIcon, Mic, Smile } from 'lucide-react';
+import { ChevronLeft, Flag, MoreHorizontal, Camera, Image as ImageIcon, Mic, Smile, Gamepad2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Page } from '../types';
 import AquariumWidget from './AquariumWidget';
@@ -11,76 +11,116 @@ interface ChatViewProps {
 }
 
 const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
-  const friendAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&q=80";
+  const friendAvatar = "https://images.unsplash.com/photo-1523264939339-c89f9dadde2e?w=400&h=400&fit=crop&q=80";
 
   return (
     <div className="flex flex-col h-full bg-white relative pt-[44px]">
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-1 bg-white border-b border-gray-100/60 z-50 sticky top-0 h-[44px]">
-        <div className="flex items-center gap-1">
-          <button className="p-2 -ml-1 active:opacity-50 transition-opacity">
-            <ChevronLeft size={28} strokeWidth={2.5} />
+      <div className="flex items-center justify-between px-[12px] py-1 bg-white border-b border-gray-100/60 z-50 sticky top-0 h-[56px]">
+        <div className="flex items-center gap-[8px]">
+          <button className="active:opacity-50 transition-opacity">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
           </button>
           <button 
             onClick={() => onNavigate('profile')}
-            className="flex items-center gap-2 active:scale-95 transition-transform relative"
+            className="flex items-center gap-[10px] active:scale-95 transition-transform relative"
           >
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 shadow-sm bg-gray-100 flex-shrink-0">
-              <img 
-                src={friendAvatar} 
-                alt="Chujie Avatar" 
-                className="w-full h-full object-cover"
-              />
+            {/* Avatar with online indicator */}
+            <div className="relative">
+              <div className="w-[40px] h-[40px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                <img 
+                  src={friendAvatar} 
+                  alt="esther Avatar" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Green online indicator */}
+              <div className="absolute bottom-0 left-0 w-[12px] h-[12px] bg-[#1dd765] rounded-full border-2 border-white" />
             </div>
             
-            <div className="flex items-center gap-1">
-              <span className="font-bold text-[16px] tracking-tight text-[#161823]">Chujie</span>
-              <div className="flex items-center">
-                <span className="text-orange-500 scale-100 mr-0.5 text-[14px]">🔥</span>
-                <span className="text-[#fe2c55] font-bold text-[14px]">133</span>
+            <div className="flex flex-col items-start">
+              <div className="flex items-center gap-[4px]">
+                <span className="font-bold text-[16px] tracking-tight text-[#161823]">esther</span>
+                <span className="text-[14px]">🔥</span>
+                <span className="text-[#fe2c55] font-bold text-[14px]">3</span>
               </div>
+              <span className="text-[12px] text-[#8a8b91]">Active now</span>
             </div>
           </button>
         </div>
-        <div className="flex items-center gap-3.5 pr-1">
-          <Flag size={22} strokeWidth={2.5} className="text-black/90" />
-          <MoreHorizontal size={22} strokeWidth={2.5} className="text-black/90" />
+        <div className="flex items-center gap-[16px]">
+          <Flag size={24} strokeWidth={2} className="text-[#161823]" />
+          <MoreHorizontal size={24} strokeWidth={2} className="text-[#161823]" />
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 pt-2 pb-1 no-scrollbar" style={{ paddingBottom: isHungry ? '150px' : '140px', transition: 'padding-bottom 0.4s ease-out' }}>
-        <div className="flex flex-col space-y-[10px]">
-          <div className="text-center text-[12px] text-gray-400 font-light tracking-tight py-1">9:18 PM</div>
-          <div className="flex justify-end">
-            <div className="bg-[#00adef] text-white px-3.5 py-[9px] rounded-[20px] rounded-tr-[4px] max-w-[80%] text-[15.5px] font-medium leading-[1.3]">
-              Did she sing "Love Story"?
+      <div className="flex-1 overflow-y-auto px-[16px] pt-[16px] pb-1 no-scrollbar" style={{ paddingBottom: isHungry ? '180px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}>
+        <div className="flex flex-col space-y-[12px]">
+          {/* Other person's message */}
+          <div className="flex items-end gap-[8px]">
+            <div className="w-[32px] h-[32px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+              <img 
+                onClick={() => onNavigate('profile')}
+                src={friendAvatar} 
+                alt="Avatar" 
+                className="w-full h-full object-cover cursor-pointer"
+              />
+            </div>
+            <div className="bg-[#f8f8f8] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+              Wowww! She always knows how to captivate her audience.
             </div>
           </div>
-          <div className="text-center text-[12px] text-gray-400 font-light tracking-tight py-1">9:35 PM</div>
-          <div className="flex justify-end">
-            <div className="bg-[#00adef] text-white px-3.5 py-[9px] rounded-[20px] rounded-tr-[4px] max-w-[80%] text-[15.5px] font-medium leading-[1.3]">
-              Nooo, what happened??? Was it amazing?
+
+          {/* Timestamp */}
+          <div className="text-center text-[13px] text-[#8a8b91] py-[8px]">9:20 PM</div>
+
+          {/* Other person's message */}
+          <div className="flex items-end gap-[8px]">
+            <div className="w-[32px] h-[32px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+              <img 
+                onClick={() => onNavigate('profile')}
+                src={friendAvatar} 
+                alt="Avatar" 
+                className="w-full h-full object-cover cursor-pointer"
+              />
+            </div>
+            <div className="bg-[#f8f8f8] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+              Wanna buy ticket together?
             </div>
           </div>
-          <div className="text-center text-[12px] text-gray-400 font-light tracking-tight py-1">12:20 PM</div>
-          <div className="space-y-3">
-            <div className="flex gap-2">
-              <div className="w-8 flex-shrink-0" />
-              <div className="bg-white border border-gray-100 shadow-[0_1px_2px_rgba(0,0,0,0.05)] px-3.5 py-[9px] rounded-[20px] rounded-bl-[4px] text-[15.5px] font-medium leading-[1.3] text-[#161823] max-w-[80%]">
-                Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
-              </div>
+
+          {/* My message */}
+          <div className="flex justify-end">
+            <div className="bg-[#20d5ec] text-white px-[14px] py-[10px] rounded-[18px] rounded-br-[4px] max-w-[70%] text-[15px] leading-[1.4]">
+              Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 flex-shrink-0 bg-gray-100">
-                <img 
-                  onClick={() => onNavigate('profile')}
-                  src={friendAvatar} 
-                  alt="Avatar" 
-                  className="w-full h-full object-cover cursor-pointer"
-                />
-              </div>
-              <span className="text-[48px] leading-none py-1 select-none">😂</span>
+          </div>
+
+          {/* Timestamp */}
+          <div className="text-center text-[13px] text-[#8a8b91] py-[8px]">9:21 PM</div>
+
+          {/* Other person's message */}
+          <div className="flex items-end gap-[8px]">
+            <div className="w-[32px] h-[32px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+              <img 
+                onClick={() => onNavigate('profile')}
+                src={friendAvatar} 
+                alt="Avatar" 
+                className="w-full h-full object-cover cursor-pointer"
+              />
+            </div>
+            <div className="bg-[#f8f8f8] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+              Hahah, ok!
+            </div>
+          </div>
+
+          {/* My message */}
+          <div className="flex justify-end">
+            <div className="bg-[#20d5ec] text-white px-[14px] py-[10px] rounded-[18px] rounded-br-[4px] max-w-[70%] text-[15px] leading-[1.4]">
+              Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
             </div>
           </div>
         </div>
@@ -104,25 +144,39 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
         </AnimatePresence>
         
         {/* Input Controls */}
-        <div className="bg-white border-t border-gray-50 pt-2 pb-[34px]">
-          <div className="px-3 space-y-3">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar py-0.5">
-              {['❤️', '😂', '👍'].map((emoji, idx) => (
-                <button key={idx} className="min-w-[48px] h-[38px] bg-gray-100/70 rounded-full flex items-center justify-center text-xl active:scale-90 transition-transform">
-                  {emoji}
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-2">
-              <button className="w-10 h-10 bg-[#00adef] rounded-full flex items-center justify-center text-white active:scale-90 transition-transform flex-shrink-0">
-                <Camera size={22} strokeWidth={2.5} />
+        <div className="bg-white pt-[8px] pb-[34px]">
+          <div className="px-[12px] space-y-[10px]">
+            {/* Quick action buttons */}
+            <div className="flex gap-[8px] overflow-x-auto no-scrollbar py-[4px]">
+              <button className="min-w-[48px] h-[36px] bg-[#f5f5f5] rounded-full flex items-center justify-center text-[18px] active:scale-90 transition-transform">
+                ❤️
               </button>
-              <div className="flex-1 min-w-0 bg-gray-100/70 rounded-full px-3.5 h-10 flex items-center gap-3 border border-gray-50/50">
-                <input type="text" placeholder="Message..." className="bg-transparent flex-1 min-w-0 outline-none text-[16px] text-[#161823] placeholder:text-gray-400/80 font-medium" />
-                <Smile size={22} className="text-black/90 cursor-pointer" strokeWidth={2.5} />
-                <ImageIcon size={22} className="text-black/90 cursor-pointer" strokeWidth={2.5} />
+              <button className="min-w-[48px] h-[36px] bg-[#f5f5f5] rounded-full flex items-center justify-center text-[18px] active:scale-90 transition-transform">
+                😆
+              </button>
+              <button className="min-w-[48px] h-[36px] bg-[#f5f5f5] rounded-full flex items-center justify-center text-[18px] active:scale-90 transition-transform">
+                👍
+              </button>
+              <button className="h-[36px] px-[12px] bg-[#f5f5f5] rounded-full flex items-center justify-center gap-[6px] active:scale-90 transition-transform">
+                <Gamepad2 size={18} className="text-[#8a5cf5]" />
+                <span className="text-[14px] font-medium text-[#161823]">Games</span>
+              </button>
+              <button className="h-[36px] px-[12px] bg-[#f5f5f5] rounded-full flex items-center justify-center gap-[6px] active:scale-90 transition-transform whitespace-nowrap">
+                <span className="text-[14px] font-bold text-[#fe2c55]">AI</span>
+                <span className="text-[14px] font-medium text-[#161823]">Group Sh...</span>
+              </button>
+            </div>
+            {/* Message input row */}
+            <div className="flex items-center gap-[8px]">
+              <button className="w-[40px] h-[40px] bg-[#20d5ec] rounded-full flex items-center justify-center text-white active:scale-90 transition-transform flex-shrink-0">
+                <Camera size={20} strokeWidth={2} />
+              </button>
+              <div className="flex-1 min-w-0 bg-[#f5f5f5] rounded-full px-[14px] h-[40px] flex items-center gap-[12px]">
+                <input type="text" placeholder="Message..." className="bg-transparent flex-1 min-w-0 outline-none text-[15px] text-[#161823] placeholder:text-[#8a8b91]" />
+                <Smile size={24} className="text-[#161823] cursor-pointer" strokeWidth={1.5} />
+                <ImageIcon size={24} className="text-[#161823] cursor-pointer" strokeWidth={1.5} />
               </div>
-              <Mic size={24} className="text-black cursor-pointer mx-1" strokeWidth={2.5} />
+              <Mic size={24} className="text-[#161823] cursor-pointer flex-shrink-0" strokeWidth={1.5} />
             </div>
           </div>
         </div>
