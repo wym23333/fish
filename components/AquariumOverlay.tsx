@@ -61,23 +61,33 @@ const FishEntity: React.FC<{ entity: EntityInstance }> = ({ entity }) => {
   
   const springX = useSpring(entity.x, springConfig);
   const springY = useSpring(entity.y, springConfig);
-  const prevX = useRef(entity.x);
+  const prevX = useRef(entity.targetX);
+  const [scaleXValue, setScaleXValue] = useState(1);
 
   useEffect(() => { springX.set(entity.targetX); }, [entity.targetX, springX]);
   useEffect(() => { springY.set(entity.targetY); }, [entity.targetY, springY]);
 
-  const scaleX = useTransform(springX, (x) => {
-    const dir = x - prevX.current > 0 ? -1 : 1;
-    prevX.current = x;
-    return dir * entity.sizeScale * entity.growth;
-  });
+  // Update scaleX based on direction of movement
+  useEffect(() => {
+    const unsubscribe = springX.on('change', (x: number) => {
+      const dir = x > prevX.current ? -1 : 1;
+      prevX.current = x;
+      setScaleXValue(dir);
+    });
+    return () => unsubscribe();
+  }, [springX]);
 
   const fontSize = `${22 * entity.sizeScale * entity.growth}px`;
 
   return (
     <motion.div
       className="absolute select-none pointer-events-none"
-      style={{ x: springX, y: springY, scaleX, fontSize }}
+      style={{ 
+        x: springX, 
+        y: springY, 
+        scaleX: scaleXValue,
+        fontSize
+      }}
     >
       {entity.emoji}
     </motion.div>
