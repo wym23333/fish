@@ -43,17 +43,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
 
   // Parallax configuration constants
   const TRIGGER_DISTANCE = 50; 
-  const SLIDE_MAX_BG = 140;
-  const SLIDE_MAX_PANEL = 140;
+  const SLIDE_MAX_BG = 120;
+  const SLIDE_MAX_PANEL = 120;
   
-  // Avatar center calculation:
-  // Avatar starts at pt-[81px], avatar height is 96px
-  // Avatar center = 81 + 48 = 129px from top
-  // White panel top will be at SLIDE_MAX_PANEL = 140px
-  // To center avatar ON the panel edge (half above, half below):
-  // Content needs to move so avatar center aligns with panel top
-  // 129 + CONTENT_SLIDE = 140 => CONTENT_SLIDE = 11px
-  const CONTENT_SLIDE = 11;
+  // Avatar center = 81 + 48 = 129px, panel top = 120px
+  // content needs to move: 120 - 129 = -9, but we clamp to 0 minimum
+  // So we let content slide just slightly: 0px (content stays, panel slides up to meet avatar)
+  const CONTENT_SLIDE = 0;
   
   const springConfig = useMemo(() => ({ stiffness: 450, damping: 45, mass: 0.8 }), []);
   const pullProgress = useMotionValue(0); 
@@ -183,19 +179,13 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
         )}
       </AnimatePresence>
 
-      {/* 1. Bottom Layer: Aquarium Background (moves fastest) */}
+      {/* 1. Bottom Layer: Aquarium Background */}
       <motion.div 
         style={{ y: backgroundY, translateY: '-100%' }} 
-        className="absolute top-0 left-0 right-0 z-0 h-[140px]"
+        className="absolute top-0 left-0 right-0 z-0 h-[120px]"
       >
         <AquariumOverlay pullProgress={springPull} feedTrigger={feedTrigger} onBaitEaten={handleBaitEaten} />
       </motion.div>
-      
-      {/* Sand Base Extension */}
-      <motion.div
-        style={{ y: panelY }}
-        className="absolute top-0 left-0 right-0 z-[1] h-10 bg-[#e4ceb1]"
-      />
 
       {/* Hide Aquarium Tip */}
       {/* FIX: Replaced typo AnsiTransition with AnimatePresence. */}
