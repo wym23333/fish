@@ -50,22 +50,22 @@ const AquariumWidget: React.FC<AquariumWidgetProps> = ({ onClick }) => {
       className="w-full h-[80px] rounded-[16px] overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform"
       whileHover={{ scale: 1.01 }}
       style={{
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.06)',
       }}
     >
-      {/* Water gradient background */}
+      {/* Water gradient background - lighter and more subtle */}
       <div 
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(180deg, #b8e4f8 0%, #d4eef9 50%, #e8dcc8 85%, #e4d4b8 100%)',
+          background: 'linear-gradient(180deg, #c5e8fb 0%, #d8f0fc 50%, #e6ddd2 85%, #ede3d5 100%)',
         }}
       />
       
-      {/* Subtle wave pattern overlay */}
+      {/* Subtle wave pattern overlay - reduced opacity */}
       <div 
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20"
         style={{
-          background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.4) 0%, transparent 50%), radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.3) 0%, transparent 40%)',
+          background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.3) 0%, transparent 50%), radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.2) 0%, transparent 40%)',
         }}
       />
       
@@ -76,46 +76,24 @@ const AquariumWidget: React.FC<AquariumWidgetProps> = ({ onClick }) => {
         ))}
       </div>
       
-      {/* Glass edge effect - top */}
-      <div className="absolute top-0 left-0 right-0 h-[6px]">
-        <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent" />
-        <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/60" />
-      </div>
-      
-      {/* Glass edge effect - bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-[6px]">
-        <div className="absolute inset-0 bg-gradient-to-t from-white/40 to-transparent" />
-      </div>
-      
-      {/* Glass edge effect - left */}
-      <div className="absolute top-0 left-0 bottom-0 w-[4px]">
-        <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent" />
-      </div>
-      
-      {/* Glass edge effect - right */}
-      <div className="absolute top-0 right-0 bottom-0 w-[4px]">
-        <div className="absolute inset-0 bg-gradient-to-l from-white/40 to-transparent" />
-      </div>
-      
-      {/* Corner highlights */}
-      <div className="absolute top-0 left-0 w-[12px] h-[12px] bg-gradient-to-br from-white/50 to-transparent rounded-br-full" />
-      <div className="absolute top-0 right-0 w-[12px] h-[12px] bg-gradient-to-bl from-white/50 to-transparent rounded-bl-full" />
+      {/* Minimal glass effect - just a subtle top highlight */}
+      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-b from-white/40 to-transparent" />
       
       {/* Bubbles */}
-      {[...Array(4)].map((_, i) => (
+      {[...Array(3)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute bg-white/30 rounded-full"
+          className="absolute bg-white/20 rounded-full"
           style={{
-            width: 3 + Math.random() * 3,
-            height: 3 + Math.random() * 3,
-            left: `${15 + i * 20}%`,
-            bottom: '30%',
+            width: 2 + Math.random() * 2,
+            height: 2 + Math.random() * 2,
+            left: `${20 + i * 30}%`,
+            bottom: '35%',
           }}
-          animate={{ y: [-20, -50], opacity: [0.5, 0] }}
+          animate={{ y: [-20, -50], opacity: [0.4, 0] }}
           transition={{
-            duration: 2 + Math.random() * 2,
-            delay: i * 0.8,
+            duration: 2.5 + Math.random() * 1.5,
+            delay: i * 1,
             repeat: Infinity,
             ease: 'easeOut'
           }}
