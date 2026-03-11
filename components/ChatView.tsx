@@ -128,21 +128,6 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
 
       {/* Input Section */}
       <div className="absolute bottom-0 left-0 right-0 z-50">
-        {/* Live Aquarium Widget */}
-        <AnimatePresence>
-          {isHungry && (
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              transition={{ duration: 0.4, type: 'spring', bounce: 0.4 }}
-              className="px-[16px] pb-[12px]"
-            >
-              <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
         {/* Input Controls */}
         <div className="bg-white pt-[8px] pb-[34px]">
           <div className="px-[12px] space-y-[10px]">
@@ -181,6 +166,22 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
           </div>
         </div>
       </div>
+
+      {/* Live Aquarium Widget - floating above messages */}
+      <AnimatePresence>
+        {isHungry && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.4, type: 'spring', bounce: 0.4 }}
+            className="fixed left-[16px] right-[16px] z-40 pointer-events-auto"
+            style={{ bottom: 'calc(34px + 8px + 36px + 10px + 40px + 8px + 12px)' }}
+          >
+            <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
