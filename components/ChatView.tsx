@@ -58,7 +58,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
 
       {/* Main Content Area */}
       <div className="flex-1 relative overflow-hidden">
-        {/* Aquarium Background Layer - fixed at bottom, lowest z-index */}
+        {/* Aquarium Background Layer - z-0, behind messages */}
         <AnimatePresence>
           {isHungry && (
             <motion.div
@@ -66,7 +66,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute left-0 right-0 z-20 pointer-events-auto"
+              className="absolute left-0 right-0 z-0"
               style={{ bottom: '128px', height: '120px' }}
             >
               <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
@@ -74,12 +74,12 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
           )}
         </AnimatePresence>
 
-        {/* Messages Scroll Area - above background, but pointer-events only on actual bubbles */}
+        {/* Messages Scroll Area - z-10, above aquarium */}
         <div 
-          className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] no-scrollbar z-10 pointer-events-none" 
+          className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] no-scrollbar z-10" 
           style={{ paddingBottom: isHungry ? '240px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}
         >
-          <div className="flex flex-col space-y-[16px] pointer-events-auto">
+          <div className="flex flex-col space-y-[16px]">
             {/* Other person's message */}
             <div className="flex items-end gap-[10px]">
               <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
