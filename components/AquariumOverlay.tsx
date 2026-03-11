@@ -324,41 +324,59 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
       {/* Bottom plants (no sand) */}
       <BottomDecorations />
 
-      {/* Liquid glass edge refraction effect - edges only, no center blur */}
+      {/* Liquid glass edge refraction effect - thicker edges for visible glass depth */}
       <div className="absolute inset-0 z-30 pointer-events-none">
-        {/* Top glass edge - thick refraction band */}
-        <div className="absolute top-0 left-0 right-0 h-[8px]">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/20 to-transparent" />
-          <div className="absolute top-[1px] left-0 right-0 h-[1px] bg-white/60" />
+        {/* Top glass edge - thick refraction band with multiple layers */}
+        <div className="absolute top-0 left-0 right-0 h-[14px]">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-b from-white/80 to-white/40" />
+          <div className="absolute top-[3px] left-0 right-0 h-[1px] bg-white/90" />
         </div>
         
-        {/* Left edge refraction */}
-        <div className="absolute top-0 left-0 bottom-0 w-[6px]">
-          <div className="absolute inset-0 bg-gradient-to-r from-white/30 via-white/10 to-transparent" />
+        {/* Left edge refraction - wider with inner highlight */}
+        <div className="absolute top-[14px] left-0 bottom-[16px] w-[10px]">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/20 to-transparent" />
+          <div className="absolute top-0 left-0 bottom-0 w-[2px] bg-gradient-to-r from-white/70 to-white/30" />
         </div>
         
-        {/* Right edge refraction */}
-        <div className="absolute top-0 right-0 bottom-0 w-[6px]">
-          <div className="absolute inset-0 bg-gradient-to-l from-white/30 via-white/10 to-transparent" />
+        {/* Right edge refraction - wider with inner highlight */}
+        <div className="absolute top-[14px] right-0 bottom-[16px] w-[10px]">
+          <div className="absolute inset-0 bg-gradient-to-l from-white/50 via-white/20 to-transparent" />
+          <div className="absolute top-0 right-0 bottom-0 w-[2px] bg-gradient-to-l from-white/70 to-white/30" />
         </div>
         
-        {/* Bottom glass edge - thicker for depth */}
-        <div className="absolute bottom-0 left-0 right-0 h-[10px]">
-          <div className="absolute inset-0 bg-gradient-to-t from-white/50 via-white/20 to-transparent" />
-          <div className="absolute bottom-[1px] left-0 right-0 h-[2px] bg-white/40" />
+        {/* Bottom glass edge - thickest for depth, mimics glass tank bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-[16px]">
+          <div className="absolute inset-0 bg-gradient-to-t from-white/70 via-white/35 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-gradient-to-t from-white/90 to-white/50" />
+          <div className="absolute bottom-[4px] left-0 right-0 h-[1px] bg-white/80" />
         </div>
         
-        {/* Corner highlights for glass thickness */}
-        <div className="absolute top-0 left-0 w-[12px] h-[12px] bg-gradient-to-br from-white/50 to-transparent rounded-br-full" />
-        <div className="absolute top-0 right-0 w-[12px] h-[12px] bg-gradient-to-bl from-white/50 to-transparent rounded-bl-full" />
+        {/* Corner highlights - larger for visible glass thickness */}
+        <div className="absolute top-0 left-0 w-[20px] h-[20px] bg-gradient-to-br from-white/70 via-white/30 to-transparent rounded-br-[8px]" />
+        <div className="absolute top-0 right-0 w-[20px] h-[20px] bg-gradient-to-bl from-white/70 via-white/30 to-transparent rounded-bl-[8px]" />
+        <div className="absolute bottom-0 left-0 w-[20px] h-[20px] bg-gradient-to-tr from-white/60 via-white/25 to-transparent rounded-tr-[8px]" />
+        <div className="absolute bottom-0 right-0 w-[20px] h-[20px] bg-gradient-to-tl from-white/60 via-white/25 to-transparent rounded-tl-[8px]" />
         
-        {/* Subtle horizontal shimmer on glass surface */}
+        {/* Glass surface reflection - diagonal highlight */}
+        <div className="absolute top-[10px] left-[15%] w-[30%] h-[2px] bg-gradient-to-r from-transparent via-white/50 to-transparent transform -rotate-[8deg]" />
+        
+        {/* Animated light shimmer across glass surface */}
         <motion.div
-          className="absolute left-[6px] right-[6px] h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
-          style={{ top: '25%' }}
-          animate={{ opacity: [0.2, 0.5, 0.2] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute left-[10px] right-[10px] h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent"
+          style={{ top: '30%' }}
+          animate={{ opacity: [0.2, 0.6, 0.2], x: [-10, 10, -10] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
         />
+        <motion.div
+          className="absolute left-[10px] right-[10px] h-[1px] bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          style={{ top: '55%' }}
+          animate={{ opacity: [0.15, 0.4, 0.15], x: [5, -5, 5] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+        />
+        
+        {/* Inner shadow for glass depth */}
+        <div className="absolute inset-[10px] border border-white/10 rounded-[4px] pointer-events-none" />
       </div>
     </motion.div>
   );
