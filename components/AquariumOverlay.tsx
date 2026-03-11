@@ -48,8 +48,17 @@ interface AquariumOverlayProps {
 const AQUARIUM_HEIGHT = 120;
 
 // Individual fish entity with spring-based movement
+// Speed multiplier based on AI state: chasing = faster movement
 const FishEntity: React.FC<{ entity: EntityInstance }> = ({ entity }) => {
-  const springConfig = { stiffness: entity.stiffness, damping: entity.damping, mass: entity.mass };
+  const isChasing = entity.aiState === 'chasing';
+  // When chasing, increase stiffness for faster response
+  const speedMultiplier = isChasing ? 3 : 1;
+  const springConfig = useMemo(() => ({ 
+    stiffness: entity.stiffness * speedMultiplier, 
+    damping: entity.damping * (isChasing ? 0.8 : 1), 
+    mass: entity.mass 
+  }), [entity.stiffness, entity.damping, entity.mass, speedMultiplier, isChasing]);
+  
   const springX = useSpring(entity.x, springConfig);
   const springY = useSpring(entity.y, springConfig);
   const prevX = useRef(entity.x);
@@ -250,35 +259,41 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
       {/* Bottom plants (no sand) */}
       <BottomDecorations />
 
-      {/* Liquid glass overlay effect */}
+      {/* Liquid glass edge refraction effect - edges only, no center blur */}
       <div className="absolute inset-0 z-30 pointer-events-none">
-        {/* Frosted glass layer */}
-        <div className="absolute inset-0 backdrop-blur-[1px]" style={{ backdropFilter: 'blur(0.8px) saturate(1.4)' }} />
-        {/* Top specular highlight - mimics glass reflection */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-white/70 to-transparent" />
-        {/* Wavy glass distortion lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.06]" preserveAspectRatio="none">
-          <filter id="glass-distort">
-            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.04" numOctaves="3" seed="5" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-          <rect width="100%" height="100%" fill="rgba(255,255,255,0.15)" filter="url(#glass-distort)" />
-        </svg>
-        {/* Horizontal shimmer bands */}
+        {/* Top glass edge - thick refraction band */}
+        <div className="absolute top-0 left-0 right-0 h-[8px]">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-white/20 to-transparent" />
+          <div className="absolute top-[1px] left-0 right-0 h-[1px] bg-white/60" />
+        </div>
+        
+        {/* Left edge refraction */}
+        <div className="absolute top-0 left-0 bottom-0 w-[6px]">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/30 via-white/10 to-transparent" />
+        </div>
+        
+        {/* Right edge refraction */}
+        <div className="absolute top-0 right-0 bottom-0 w-[6px]">
+          <div className="absolute inset-0 bg-gradient-to-l from-white/30 via-white/10 to-transparent" />
+        </div>
+        
+        {/* Bottom glass edge - thicker for depth */}
+        <div className="absolute bottom-0 left-0 right-0 h-[10px]">
+          <div className="absolute inset-0 bg-gradient-to-t from-white/50 via-white/20 to-transparent" />
+          <div className="absolute bottom-[1px] left-0 right-0 h-[2px] bg-white/40" />
+        </div>
+        
+        {/* Corner highlights for glass thickness */}
+        <div className="absolute top-0 left-0 w-[12px] h-[12px] bg-gradient-to-br from-white/50 to-transparent rounded-br-full" />
+        <div className="absolute top-0 right-0 w-[12px] h-[12px] bg-gradient-to-bl from-white/50 to-transparent rounded-bl-full" />
+        
+        {/* Subtle horizontal shimmer on glass surface */}
         <motion.div
-          className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent"
-          style={{ top: '30%' }}
-          animate={{ opacity: [0.3, 0.7, 0.3], y: [-1, 2, -1] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute left-[6px] right-[6px] h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          style={{ top: '25%' }}
+          animate={{ opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <motion.div
-          className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"
-          style={{ top: '65%' }}
-          animate={{ opacity: [0.2, 0.5, 0.2], y: [1, -2, 1] }}
-          transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        />
-        {/* Bottom edge glass rim */}
-        <div className="absolute bottom-0 left-0 right-0 h-[6px] bg-gradient-to-b from-transparent to-white/20" />
       </div>
     </motion.div>
   );
