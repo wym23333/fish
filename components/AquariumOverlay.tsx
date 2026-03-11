@@ -96,6 +96,24 @@ const FishEntity: React.FC<{ entity: EntityInstance }> = ({ entity }) => {
 
 // Bait cookie
 const Bait: React.FC<{ bait: BaitState; onStateChange: (id: number, status: BaitState['status']) => void }> = ({ bait, onStateChange }) => {
+  const sinkY = useSpring(10, { stiffness: 5, damping: 20 });
+  
+  useEffect(() => {
+    if (bait.status === 'sinking') {
+      sinkY.set(AQUARIUM_HEIGHT - 20);
+    }
+  }, [bait.status, sinkY]);
+  
+  // Sync sinkY to bait.motionY for collision detection
+  useEffect(() => {
+    const unsubscribe = sinkY.on('change', (v: number) => {
+      bait.motionY.set(v);
+    });
+    return () => unsubscribe();
+  }, [sinkY, bait.motionY]);
+
+  if (bait.status === 'eaten') return null;
+
   return (
     <motion.div
       initial={{ y: -30, scale: 0 }}
@@ -103,12 +121,9 @@ const Bait: React.FC<{ bait: BaitState; onStateChange: (id: number, status: Bait
       transition={{ type: 'spring', stiffness: 200, damping: 15 }}
       onAnimationComplete={() => onStateChange(bait.id, 'sinking')}
       className="absolute z-20 text-[22px] drop-shadow"
-      style={{ left: bait.x, y: bait.motionY }}
+      style={{ left: bait.x }}
     >
-      <motion.div
-        animate={bait.status === 'sinking' ? { y: AQUARIUM_HEIGHT } : {}}
-        transition={bait.status === 'sinking' ? { duration: 6, ease: 'linear' } : {}}
-      >
+      <motion.div style={{ y: sinkY }}>
         🍪
       </motion.div>
     </motion.div>
@@ -224,22 +239,62 @@ const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTri
 
   const handleBaitStateChange = useCallback((id: number, status: BaitState['status']) => {
     setBaits(prev => prev.map(b => b.id === id ? { ...b, status } : b));
-    if (status === 'sinking') {
-      // After a delay, treat as eaten
-      setTimeout(() => {
-        setBaits(prev => prev.filter(b => b.id !== id));
-        onBaitEaten?.();
-        const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
-        setEntities(prev => prev.map(e => ({
-          ...e,
-          aiState: 'wandering',
-          growth: e.id === 0 ? e.growth + 0.08 : e.growth,
-          targetX: 10 + Math.random() * (containerWidth - 40),
-          targetY: 8 + Math.random() * (AQUARIUM_HEIGHT - 36),
-        })));
-      }, 2000);
-    }
-  }, [onBaitEaten]);
+  }, []);
+
+  // Collision detection: check if any fish is close enough to eat the bait
+  useEffect(() => {
+    if (baits.length === 0) return;
+    
+    const checkCollision = setInterval(() => {
+      setBaits(prevBaits => {
+        const newBaits = [...prevBaits];
+        let baitEaten = false;
+        let eatenBaitId: number | null = null;
+        
+        for (const bait of newBaits) {
+          if (bait.status === 'eaten') continue;
+          
+          // Get current bait Y position (starts at bait.y, sinks over time)
+          const baitY = bait.motionY.get();
+          
+          for (const entity of entities) {
+            const dx = entity.targetX - bait.x;
+            const dy = entity.targetY - baitY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            // If fish is within 25px of bait, eat it
+            if (distance < 25 && bait.status === 'sinking') {
+              bait.status = 'eaten';
+              baitEaten = true;
+              eatenBaitId = bait.id;
+              break;
+            }
+          }
+        }
+        
+        if (baitEaten && eatenBaitId !== null) {
+          // Remove eaten bait after short delay for visual feedback
+          setTimeout(() => {
+            setBaits(prev => prev.filter(b => b.id !== eatenBaitId));
+            onBaitEaten?.();
+            
+            const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+            setEntities(prev => prev.map((e, i) => ({
+              ...e,
+              aiState: 'wandering',
+              growth: i === 0 ? e.growth + 0.08 : e.growth,
+              targetX: 10 + Math.random() * (containerWidth - 40),
+              targetY: 8 + Math.random() * (AQUARIUM_HEIGHT - 36),
+            })));
+          }, 200);
+        }
+        
+        return newBaits;
+      });
+    }, 100);
+    
+    return () => clearInterval(checkCollision);
+  }, [baits.length, entities, onBaitEaten]);
 
   return (
     <motion.div
