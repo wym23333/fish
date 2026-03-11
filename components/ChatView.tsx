@@ -58,7 +58,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
 
       {/* Messages Container */}
       <div className="flex-1 relative overflow-hidden bg-white">
-        {/* Aquarium Background - fixed at bottom, behind all messages */}
+        {/* Aquarium Background - fixed at bottom, above messages but below input */}
         <AnimatePresence>
           {isHungry && (
             <motion.div
@@ -66,7 +66,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute bottom-0 left-[16px] right-[16px] z-0 pointer-events-none"
+              className="absolute bottom-0 left-[16px] right-[16px] z-40 pointer-events-none"
               style={{ height: '100px' }}
             >
               <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
