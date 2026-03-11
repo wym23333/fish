@@ -56,26 +56,10 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
         </div>
       </div>
 
-      {/* Messages Container - relative for background positioning */}
+      {/* Messages Container */}
       <div className="flex-1 relative overflow-hidden">
-        {/* Aquarium Background - positioned behind messages */}
-        <AnimatePresence>
-          {isHungry && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute bottom-0 left-0 right-0 px-[16px] pb-[12px] z-0 pointer-events-none"
-              style={{ height: '100px' }}
-            >
-              <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Messages Scroll Area - relative to stack above aquarium */}
-        <div className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] pb-1 no-scrollbar z-10" style={{ paddingBottom: isHungry ? '220px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}>
+        {/* Messages Scroll Area */}
+        <div className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] pb-1 no-scrollbar" style={{ paddingBottom: isHungry ? '240px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}>
           <div className="flex flex-col space-y-[16px]">
             {/* Other person's message */}
             <div className="flex items-end gap-[10px]">
@@ -147,6 +131,21 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
 
       {/* Input Section */}
       <div className="absolute bottom-0 left-0 right-0 z-50">
+        {/* Aquarium Widget - above input, behind messages when scrolled */}
+        <AnimatePresence>
+          {isHungry && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3 }}
+              className="px-[16px] pb-[8px]"
+            >
+              <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
         {/* Input Controls */}
         <div className="bg-white pt-[8px] pb-[34px]">
           <div className="px-[12px] space-y-[10px]">
