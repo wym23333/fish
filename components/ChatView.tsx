@@ -56,93 +56,100 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
         </div>
       </div>
 
-      {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto px-[16px] pt-[16px] pb-1 no-scrollbar" style={{ paddingBottom: isHungry ? '220px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}>
-        <div className="flex flex-col space-y-[16px]">
-          {/* Other person's message */}
-          <div className="flex items-end gap-[10px]">
-            <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-              <img 
-                onClick={() => onNavigate('profile')}
-                src={friendAvatar} 
-                alt="Avatar" 
-                className="w-full h-full object-cover cursor-pointer"
-              />
-            </div>
-            <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
-              Wowww! She always knows how to captivate her audience.
-            </div>
-          </div>
+      {/* Main Content Area */}
+      <div className="flex-1 relative overflow-hidden">
+        {/* Aquarium Background Layer - fixed at bottom, lowest z-index */}
+        <AnimatePresence>
+          {isHungry && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="absolute bottom-[130px] left-[16px] right-[16px] z-0 pointer-events-auto"
+              style={{ height: '100px' }}
+            >
+              <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          {/* Timestamp */}
-          <div className="text-center text-[13px] text-[#8a8b91] py-[4px]">9:20 PM</div>
-
-          {/* Other person's message */}
-          <div className="flex items-end gap-[10px]">
-            <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-              <img 
-                onClick={() => onNavigate('profile')}
-                src={friendAvatar} 
-                alt="Avatar" 
-                className="w-full h-full object-cover cursor-pointer"
-              />
+        {/* Messages Scroll Area - above aquarium */}
+        <div 
+          className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] no-scrollbar z-10" 
+          style={{ paddingBottom: isHungry ? '240px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}
+        >
+          <div className="flex flex-col space-y-[16px]">
+            {/* Other person's message */}
+            <div className="flex items-end gap-[10px]">
+              <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                <img 
+                  onClick={() => onNavigate('profile')}
+                  src={friendAvatar} 
+                  alt="Avatar" 
+                  className="w-full h-full object-cover cursor-pointer"
+                />
+              </div>
+              <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+                Wowww! She always knows how to captivate her audience.
+              </div>
             </div>
-            <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
-              Wanna buy ticket together?
-            </div>
-          </div>
 
-          {/* My message */}
-          <div className="flex justify-end">
-            <div className="bg-[#20d5ec] text-white px-[14px] py-[10px] rounded-[18px] rounded-br-[4px] max-w-[70%] text-[15px] leading-[1.4]">
-              Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
-            </div>
-          </div>
+            {/* Timestamp */}
+            <div className="text-center text-[13px] text-[#8a8b91] py-[4px]">9:20 PM</div>
 
-          {/* Timestamp */}
-          <div className="text-center text-[13px] text-[#8a8b91] py-[4px]">9:21 PM</div>
-
-          {/* Other person's message */}
-          <div className="flex items-end gap-[10px]">
-            <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-              <img 
-                onClick={() => onNavigate('profile')}
-                src={friendAvatar} 
-                alt="Avatar" 
-                className="w-full h-full object-cover cursor-pointer"
-              />
+            {/* Other person's message */}
+            <div className="flex items-end gap-[10px]">
+              <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                <img 
+                  onClick={() => onNavigate('profile')}
+                  src={friendAvatar} 
+                  alt="Avatar" 
+                  className="w-full h-full object-cover cursor-pointer"
+                />
+              </div>
+              <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+                Wanna buy ticket together?
+              </div>
             </div>
-            <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
-              Hahah, ok!
-            </div>
-          </div>
 
-          {/* My message */}
-          <div className="flex justify-end">
-            <div className="bg-[#20d5ec] text-white px-[14px] py-[10px] rounded-[18px] rounded-br-[4px] max-w-[70%] text-[15px] leading-[1.4]">
-              Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
+            {/* My message */}
+            <div className="flex justify-end">
+              <div className="bg-[#20d5ec] text-white px-[14px] py-[10px] rounded-[18px] rounded-br-[4px] max-w-[70%] text-[15px] leading-[1.4]">
+                Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
+              </div>
+            </div>
+
+            {/* Timestamp */}
+            <div className="text-center text-[13px] text-[#8a8b91] py-[4px]">9:21 PM</div>
+
+            {/* Other person's message */}
+            <div className="flex items-end gap-[10px]">
+              <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                <img 
+                  onClick={() => onNavigate('profile')}
+                  src={friendAvatar} 
+                  alt="Avatar" 
+                  className="w-full h-full object-cover cursor-pointer"
+                />
+              </div>
+              <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+                Hahah, ok!
+              </div>
+            </div>
+
+            {/* My message */}
+            <div className="flex justify-end">
+              <div className="bg-[#20d5ec] text-white px-[14px] py-[10px] rounded-[18px] rounded-br-[4px] max-w-[70%] text-[15px] leading-[1.4]">
+                Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Aquarium Background - between messages and input */}
-      <AnimatePresence>
-        {isHungry && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="relative z-10 px-[16px] pb-[12px] pointer-events-auto"
-          >
-            <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Input Section */}
-      <div className="relative z-50 bg-white pt-[8px] pb-[34px]">
+      <div className="absolute bottom-0 left-0 right-0 z-50 bg-white pt-[8px] pb-[34px]">
         <div className="px-[12px] space-y-[10px]">
           {/* Quick action buttons */}
           <div className="flex gap-[8px] overflow-x-auto no-scrollbar py-[4px]">
