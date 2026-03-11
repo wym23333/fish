@@ -57,8 +57,24 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 relative overflow-hidden">
-        {/* Messages Scroll Area */}
+      <div className="flex-1 relative overflow-hidden bg-white">
+        {/* Aquarium Background - fixed at bottom, behind all messages */}
+        <AnimatePresence>
+          {isHungry && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="absolute bottom-0 left-[16px] right-[16px] z-0 pointer-events-none"
+              style={{ height: '100px' }}
+            >
+              <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Messages Scroll Area - positioned on top of aquarium */}
         <div className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] pb-1 no-scrollbar" style={{ paddingBottom: isHungry ? '220px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}>
           <div className="flex flex-col space-y-[16px]">
             {/* Other person's message */}
@@ -125,21 +141,6 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
                 Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
               </div>
             </div>
-
-            {/* Aquarium Widget - at the end of messages, as part of scroll content */}
-            <AnimatePresence>
-              {isHungry && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4, type: 'spring', bounce: 0.3 }}
-                  className="mt-[16px]"
-                >
-                  <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </div>
       </div>
