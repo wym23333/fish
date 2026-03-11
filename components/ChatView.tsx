@@ -16,8 +16,8 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
   return (
     <div className="flex flex-col h-full bg-white relative pt-[44px]">
       {/* Header */}
-      <div className="flex items-center justify-between px-[12px] py-1 bg-white border-b border-gray-100/60 z-50 sticky top-0 h-[56px]">
-        <div className="flex items-center gap-[8px]">
+      <div className="flex items-center justify-between px-[16px] py-1 bg-white border-b border-gray-100/60 z-50 sticky top-0 h-[56px]">
+        <div className="flex items-center gap-[12px]">
           <button className="active:opacity-50 transition-opacity">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#161823" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6" />
@@ -29,7 +29,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
           >
             {/* Avatar with online indicator */}
             <div className="relative">
-              <div className="w-[40px] h-[40px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+              <div className="w-[44px] h-[44px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                 <img 
                   src={friendAvatar} 
                   alt="esther Avatar" 
@@ -37,7 +37,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
                 />
               </div>
               {/* Green online indicator */}
-              <div className="absolute bottom-0 left-0 w-[12px] h-[12px] bg-[#1dd765] rounded-full border-2 border-white" />
+              <div className="absolute bottom-0 left-0 w-[14px] h-[14px] bg-[#1dd765] rounded-full border-2 border-white" />
             </div>
             
             <div className="flex flex-col items-start">
@@ -50,18 +50,18 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
             </div>
           </button>
         </div>
-        <div className="flex items-center gap-[16px]">
+        <div className="flex items-center gap-[20px]">
           <Flag size={24} strokeWidth={2} className="text-[#161823]" />
           <MoreHorizontal size={24} strokeWidth={2} className="text-[#161823]" />
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-[16px] pt-[16px] pb-1 no-scrollbar" style={{ paddingBottom: isHungry ? '180px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}>
-        <div className="flex flex-col space-y-[12px]">
+      <div className="flex-1 overflow-y-auto px-[16px] pt-[16px] pb-1 no-scrollbar" style={{ paddingBottom: isHungry ? '220px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}>
+        <div className="flex flex-col space-y-[16px]">
           {/* Other person's message */}
-          <div className="flex items-end gap-[8px]">
-            <div className="w-[32px] h-[32px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+          <div className="flex items-end gap-[10px]">
+            <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
               <img 
                 onClick={() => onNavigate('profile')}
                 src={friendAvatar} 
@@ -69,17 +69,17 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
                 className="w-full h-full object-cover cursor-pointer"
               />
             </div>
-            <div className="bg-[#f8f8f8] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+            <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
               Wowww! She always knows how to captivate her audience.
             </div>
           </div>
 
           {/* Timestamp */}
-          <div className="text-center text-[13px] text-[#8a8b91] py-[8px]">9:20 PM</div>
+          <div className="text-center text-[13px] text-[#8a8b91] py-[4px]">9:20 PM</div>
 
           {/* Other person's message */}
-          <div className="flex items-end gap-[8px]">
-            <div className="w-[32px] h-[32px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+          <div className="flex items-end gap-[10px]">
+            <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
               <img 
                 onClick={() => onNavigate('profile')}
                 src={friendAvatar} 
@@ -87,7 +87,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
                 className="w-full h-full object-cover cursor-pointer"
               />
             </div>
-            <div className="bg-[#f8f8f8] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+            <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
               Wanna buy ticket together?
             </div>
           </div>
@@ -100,11 +100,11 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
           </div>
 
           {/* Timestamp */}
-          <div className="text-center text-[13px] text-[#8a8b91] py-[8px]">9:21 PM</div>
+          <div className="text-center text-[13px] text-[#8a8b91] py-[4px]">9:21 PM</div>
 
           {/* Other person's message */}
-          <div className="flex items-end gap-[8px]">
-            <div className="w-[32px] h-[32px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+          <div className="flex items-end gap-[10px]">
+            <div className="w-[36px] h-[36px] rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
               <img 
                 onClick={() => onNavigate('profile')}
                 src={friendAvatar} 
@@ -112,7 +112,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
                 className="w-full h-full object-cover cursor-pointer"
               />
             </div>
-            <div className="bg-[#f8f8f8] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
+            <div className="bg-[#f5f5f5] px-[14px] py-[10px] rounded-[18px] rounded-bl-[4px] max-w-[70%] text-[15px] leading-[1.4] text-[#161823]">
               Hahah, ok!
             </div>
           </div>
@@ -136,7 +136,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ duration: 0.4, type: 'spring', bounce: 0.4 }}
-              className="px-3 pb-1.5"
+              className="px-[16px] pb-[12px]"
             >
               <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
             </motion.div>

@@ -1,127 +1,126 @@
-
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 interface AquariumWidgetProps {
   onClick: () => void;
 }
 
+// Floating sea creature with gentle animation
+const SeaCreature: React.FC<{
+  emoji: string;
+  size: number;
+  x: string;
+  y: string;
+  duration: number;
+  delay: number;
+}> = ({ emoji, size, x, y, duration, delay }) => {
+  return (
+    <motion.div
+      className="absolute select-none"
+      style={{ fontSize: size, left: x, top: y }}
+      animate={{
+        y: [-3, 3, -3],
+        x: [-2, 2, -2],
+      }}
+      transition={{
+        duration,
+        repeat: Infinity,
+        delay,
+        ease: 'easeInOut',
+      }}
+    >
+      {emoji}
+    </motion.div>
+  );
+};
+
 const AquariumWidget: React.FC<AquariumWidgetProps> = ({ onClick }) => {
+  // Sea creatures positioned to match design
+  const creatures = useMemo(() => [
+    { emoji: '🪼', size: 24, x: '8%', y: '15%', duration: 3.5, delay: 0 },
+    { emoji: '🦐', size: 20, x: '25%', y: '55%', duration: 4, delay: 0.5 },
+    { emoji: '🐙', size: 22, x: '42%', y: '10%', duration: 3.8, delay: 0.3 },
+    { emoji: '🐟', size: 22, x: '62%', y: '45%', duration: 4.2, delay: 0.8 },
+    { emoji: '🪸', size: 20, x: '80%', y: '55%', duration: 3.2, delay: 0.2 },
+  ], []);
+
   return (
     <motion.button
       onClick={onClick}
-      className="w-full h-[52px] rounded-2xl overflow-hidden relative flex items-center px-4 text-left cursor-pointer active:scale-[0.98] transition-transform"
+      className="w-full h-[80px] rounded-[16px] overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform"
+      whileHover={{ scale: 1.01 }}
       style={{
-        background: 'linear-gradient(135deg, #a7e7ff 0%, #44a3ff 100%)',
-        boxShadow: '0 4px 15px rgba(0, 120, 255, 0.2), inset 0 1px 2px rgba(255,255,255,0.5)',
-        border: '1px solid rgba(255,255,255,0.3)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
       }}
-      whileHover={{ scale: 1.02 }}
     >
-      {/* Caustic light effect */}
-      <motion.div
-        className="absolute inset-0 opacity-20 mix-blend-soft-light"
+      {/* Water gradient background */}
+      <div 
+        className="absolute inset-0"
         style={{
-          background: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.6), transparent 50%), radial-gradient(circle at 80% 60%, rgba(255,255,255,0.5), transparent 45%)',
-          backgroundSize: '400% 400%',
+          background: 'linear-gradient(180deg, #b8e4f8 0%, #d4eef9 50%, #e8dcc8 85%, #e4d4b8 100%)',
         }}
-        animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}
-        transition={{ duration: 20, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
       />
       
-      {/* Text Content */}
-      <div className="relative z-10">
-        <p className="text-white font-bold text-sm drop-shadow">
-          View profile to feed
-        </p>
-      </div>
+      {/* Subtle wave pattern overlay */}
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.4) 0%, transparent 50%), radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.3) 0%, transparent 40%)',
+        }}
+      />
       
-      {/* Fish Animation Area */}
-      <div className="absolute top-0 right-0 w-28 h-full">
-        <motion.div
-          className="absolute text-3xl"
-          style={{ top: '50%', y: '-50%', left: 0 }}
-          animate={{
-            x: [10, 32, 10],
-            scaleX: [1, 1, -1, -1, 1],
-            y: ['-50%', '-30%', '-50%'],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            times: [0, 0.45, 0.5, 0.95, 1],
-          }}
-        >
-          <div className="relative">
-            <span style={{ display: 'inline-block' }}>🐡</span>
-
-            {/* Speech Bubble: Attached to fish */}
-            <motion.div
-              className="absolute top-1/2 -translate-y-1/2 left-[calc(100%_+_4px)] z-20"
-              animate={{
-                scaleX: [1, 1, -1, -1, 1],
-              }}
-              transition={{
-                scaleX: {
-                  duration: 12,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  times: [0, 0.45, 0.5, 0.95, 1]
-                }
-              }}
-            >
-              <div className="relative bg-white text-black text-[8px] font-bold px-1 py-[2px] leading-none rounded shadow-md whitespace-nowrap">
-                Hungry!
-                {/* Arrow pointing left (visible initially) */}
-                <motion.div
-                  className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 w-0 h-0 border-y-[1px] border-y-transparent border-r-[2px] border-r-white"
-                  animate={{ opacity: [1, 1, 0, 0, 1] }}
-                  transition={{
-                    duration: 12,
-                    repeat: Infinity,
-                    ease: 'linear',
-                    times: [0, 0.499, 0.5, 0.999, 1],
-                  }}
-                />
-                {/* Arrow pointing right (hidden initially) */}
-                <motion.div
-                  className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 w-0 h-0 border-y-[1px] border-y-transparent border-l-[2px] border-l-white"
-                  animate={{ opacity: [0, 0, 1, 1, 0] }}
-                  transition={{
-                    duration: 12,
-                    repeat: Infinity,
-                    ease: 'linear',
-                    times: [0, 0.499, 0.5, 0.999, 1],
-                  }}
-                />
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-        
-        {/* Bubbles */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute bg-white/20 rounded-full"
-            style={{
-              width: 2 + Math.random() * 2,
-              height: 2 + Math.random() * 2,
-              left: `${10 + Math.random() * 80}%`,
-              bottom: 0,
-            }}
-            initial={{ y: 0, opacity: 0 }}
-            animate={{ y: -52, opacity: [0, 0.7, 0] }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              delay: Math.random() * 5,
-              repeat: Infinity,
-              ease: 'linear'
-            }}
-          />
+      {/* Sea creatures */}
+      <div className="absolute inset-0">
+        {creatures.map((c, i) => (
+          <SeaCreature key={i} {...c} />
         ))}
       </div>
+      
+      {/* Glass edge effect - top */}
+      <div className="absolute top-0 left-0 right-0 h-[6px]">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/60" />
+      </div>
+      
+      {/* Glass edge effect - bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-[6px]">
+        <div className="absolute inset-0 bg-gradient-to-t from-white/40 to-transparent" />
+      </div>
+      
+      {/* Glass edge effect - left */}
+      <div className="absolute top-0 left-0 bottom-0 w-[4px]">
+        <div className="absolute inset-0 bg-gradient-to-r from-white/40 to-transparent" />
+      </div>
+      
+      {/* Glass edge effect - right */}
+      <div className="absolute top-0 right-0 bottom-0 w-[4px]">
+        <div className="absolute inset-0 bg-gradient-to-l from-white/40 to-transparent" />
+      </div>
+      
+      {/* Corner highlights */}
+      <div className="absolute top-0 left-0 w-[12px] h-[12px] bg-gradient-to-br from-white/50 to-transparent rounded-br-full" />
+      <div className="absolute top-0 right-0 w-[12px] h-[12px] bg-gradient-to-bl from-white/50 to-transparent rounded-bl-full" />
+      
+      {/* Bubbles */}
+      {[...Array(4)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute bg-white/30 rounded-full"
+          style={{
+            width: 3 + Math.random() * 3,
+            height: 3 + Math.random() * 3,
+            left: `${15 + i * 20}%`,
+            bottom: '30%',
+          }}
+          animate={{ y: [-20, -50], opacity: [0.5, 0] }}
+          transition={{
+            duration: 2 + Math.random() * 2,
+            delay: i * 0.8,
+            repeat: Infinity,
+            ease: 'easeOut'
+          }}
+        />
+      ))}
     </motion.button>
   );
 };
