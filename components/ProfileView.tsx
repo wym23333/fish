@@ -23,13 +23,15 @@ const SendArrowIcon = () => (
 );
 
 interface ProfileViewProps {
-  onNavigate: (page: Page) => void;
+  onNavigate: (page: Page, options?: { autoFeed?: boolean }) => void;
   onThemeChange?: (theme: 'light' | 'dark') => void;
   isHungry?: boolean;
   onFeedComplete?: () => void;
+  autoFeedOnEnter?: boolean;
+  onAutoFeedDone?: () => void;
 }
 
-const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, isHungry, onFeedComplete }) => {
+const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, isHungry, onFeedComplete, autoFeedOnEnter, onAutoFeedDone }) => {
   // Avatar image - two people in a circular frame
   const friendAvatar = "https://images.unsplash.com/photo-1523264939339-c89f9dadde2e?w=400&h=400&fit=crop&q=80";
   
@@ -86,16 +88,29 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
       initialFeedDone.current = true;
       enterTimeoutId = setTimeout(() => {
         enterAquarium();
-        feedTimeoutId = setTimeout(() => setFeedTrigger(c => c + 1), 500); // Auto-feed once on arrival
+        feedTimeoutId = setTimeout(() => setFeedTrigger(c => c + 1), 500);
       }, 600);
     }
 
-    // Cleanup function to clear timeouts if component unmounts
     return () => {
       clearTimeout(enterTimeoutId);
       clearTimeout(feedTimeoutId);
     };
   }, [isHungry, enterAquarium]);
+
+  // Handle autoFeedOnEnter: triggered when navigating from widget click in chat
+  useEffect(() => {
+    if (!autoFeedOnEnter) return;
+    const enterTimeoutId = setTimeout(() => {
+      enterAquarium();
+      const feedTimeoutId = setTimeout(() => {
+        setFeedTrigger(c => c + 1);
+        onAutoFeedDone?.();
+      }, 500);
+      return () => clearTimeout(feedTimeoutId);
+    }, 400);
+    return () => clearTimeout(enterTimeoutId);
+  }, [autoFeedOnEnter, enterAquarium, onAutoFeedDone]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     if (scrollContainerRef.current?.scrollTop === 0 || isAquariumMode) {
@@ -186,6 +201,30 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onNavigate, onThemeChange, is
       >
         <AquariumOverlay pullProgress={springPull} feedTrigger={feedTrigger} onBaitEaten={handleBaitEaten} />
       </motion.div>
+
+      {/* Pull-down hint - only shown when aquarium is closed */}
+      <AnimatePresence>
+        {!isAquariumMode && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ delay: 1.2, duration: 0.4 }}
+            className="absolute top-[44px] left-0 right-0 z-[115] flex justify-center pointer-events-none"
+          >
+            <motion.div
+              animate={{ y: [0, 4, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="flex flex-col items-center gap-[2px] py-[6px]"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+              <span className="text-[10px] text-black/20 font-medium tracking-wide">下拉喂鱼</span>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hide Aquarium Tip */}
       {/* FIX: Replaced typo AnsiTransition with AnimatePresence. */}

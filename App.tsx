@@ -9,14 +9,17 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('chat');
   const [statusTheme, setStatusTheme] = useState<'light' | 'dark'>('dark');
   const [isHungry, setIsHungry] = useState(true);
+  const [autoFeedOnEnter, setAutoFeedOnEnter] = useState(false);
 
-  // Sync root background with profile theme
-  // Updated for light glass theme: Use a softer background to make glass pop
   const isAquariumActive = currentPage === 'profile' && statusTheme === 'light';
 
-  const handleNavigate = (page: Page) => {
+  const handleNavigate = (page: Page, options?: { autoFeed?: boolean }) => {
     if (page === 'chat') {
       setIsHungry(true);
+      setAutoFeedOnEnter(false);
+    }
+    if (page === 'profile' && options?.autoFeed) {
+      setAutoFeedOnEnter(true);
     }
     setCurrentPage(page);
   };
@@ -40,6 +43,8 @@ const App: React.FC = () => {
               onThemeChange={setStatusTheme}
               isHungry={isHungry}
               onFeedComplete={() => setIsHungry(false)}
+              autoFeedOnEnter={autoFeedOnEnter}
+              onAutoFeedDone={() => setAutoFeedOnEnter(false)}
             />
           </div>
         )}

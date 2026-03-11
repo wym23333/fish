@@ -6,7 +6,7 @@ import { Page } from '../types';
 import AquariumWidget from './AquariumWidget';
 
 interface ChatViewProps {
-  onNavigate: (page: Page) => void;
+  onNavigate: (page: Page, options?: { autoFeed?: boolean }) => void;
   isHungry?: boolean;
 }
 
@@ -138,7 +138,7 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
               transition={{ duration: 0.4, type: 'spring', bounce: 0.4 }}
               className="px-3 pb-1.5"
             >
-              <AquariumWidget onClick={() => onNavigate('profile')} />
+              <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
             </motion.div>
           )}
         </AnimatePresence>
