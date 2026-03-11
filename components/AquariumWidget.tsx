@@ -50,22 +50,27 @@ const AquariumWidget: React.FC<AquariumWidgetProps> = ({ onClick }) => {
       className="w-full h-[100px] relative cursor-pointer active:scale-[0.98] transition-transform"
       whileHover={{ scale: 1.005 }}
     >
-      {/* Water gradient - no border-radius, bleeds into bg */}
+      {/* Water gradient */}
       <div 
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(180deg, transparent 0%, #d6edf9 20%, #daeefa 55%, #e8ddd2 85%, #ede3d5 100%)',
+          background: 'linear-gradient(180deg, transparent 0%, #d6edf9 25%, #daeefa 55%, #e8ddd2 80%, #ede3d5 100%)',
         }}
       />
 
-      {/* Left and right soft fade to blend with white bg */}
+      {/* Left and right soft fade */}
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(90deg, white 0%, transparent 12%, transparent 88%, white 100%)',
+        background: 'linear-gradient(90deg, white 0%, transparent 15%, transparent 85%, white 100%)',
       }} />
 
       {/* Top soft fade */}
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(180deg, white 0%, transparent 30%)',
+        background: 'linear-gradient(180deg, white 0%, transparent 35%)',
+      }} />
+
+      {/* Bottom soft fade */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(0deg, white 0%, transparent 35%)',
       }} />
 
       {/* Sea creatures */}
