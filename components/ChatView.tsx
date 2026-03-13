@@ -144,6 +144,14 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
                 Count me in plzz. But tickets are gonna sell out fast. We should set up a plan.
               </div>
             </div>
+
+            {/* Transparent clickable area for aquarium */}
+            {isHungry && (
+              <div 
+                className="h-[120px] cursor-pointer"
+                onClick={() => onNavigate('profile', { autoFeed: true })}
+              />
+            )}
           </div>
         </div>
       </div>
