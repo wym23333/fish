@@ -56,42 +56,42 @@ const ChatView: React.FC<ChatViewProps> = ({ onNavigate, isHungry }) => {
         </div>
       </div>
 
+      {/* Aquarium Background Layer - fixed position relative to screen bottom */}
+      <AnimatePresence>
+        {isHungry && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute left-0 right-0 z-10"
+            style={{ bottom: '128px', height: '120px' }}
+          >
+            <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Transparent click target for aquarium - z-30, above messages */}
+      <AnimatePresence>
+        {isHungry && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="absolute left-0 right-0 z-30 cursor-pointer"
+            style={{ bottom: '128px', height: '120px' }}
+            onClick={() => onNavigate('profile', { autoFeed: true })}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Main Content Area */}
       <div className="flex-1 relative overflow-hidden">
-        {/* Aquarium Background Layer - z-0, behind everything */}
-        <AnimatePresence>
-          {isHungry && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute left-0 right-0 z-0"
-              style={{ bottom: '128px', height: '120px' }}
-            >
-              <AquariumWidget onClick={() => onNavigate('profile', { autoFeed: true })} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Transparent click target for aquarium - z-20, above scroll layer */}
-        <AnimatePresence>
-          {isHungry && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute left-0 right-0 z-20 cursor-pointer"
-              style={{ bottom: '128px', height: '120px' }}
-              onClick={() => onNavigate('profile', { autoFeed: true })}
-            />
-          )}
-        </AnimatePresence>
-
-        {/* Messages Scroll Area - z-10, normal pointer-events for scrolling */}
+        {/* Messages Scroll Area - z-20 */}
         <div 
-          className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] no-scrollbar z-10" 
+          className="absolute inset-0 overflow-y-auto px-[16px] pt-[16px] no-scrollbar z-20" 
           style={{ paddingBottom: isHungry ? '240px' : '170px', transition: 'padding-bottom 0.4s ease-out' }}
         >
           <div className="flex flex-col space-y-[16px]">
