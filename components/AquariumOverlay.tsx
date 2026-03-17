@@ -1,10 +1,8 @@
-
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { motion, MotionValue, useMotionValueEvent, AnimatePresence, useTransform, useSpring, useMotionValue, Variants, motionValue } from 'framer-motion';
-import TickingCounter from './TickingCounter';
+import { motion, MotionValue, useTransform, useSpring, useMotionValue, motionValue } from 'framer-motion';
 
-type EntityType = 'tropical' | 'puffer' | 'blue' | 'shrimp' | 'jellyfish' | 'octopus' | 'crab' | 'whale';
-type AIState = 'wandering' | 'perceiving' | 'chasing' | 'confused' | 'celebrating';
+type EntityType = 'tropical' | 'puffer' | 'blue' | 'jellyfish' | 'octopus';
+type AIState = 'wandering' | 'chasing' | 'confused' | 'celebrating';
 
 interface EntityTrait {
   type: EntityType;
@@ -13,18 +11,14 @@ interface EntityTrait {
   damping: number;
   mass: number;
   sizeScale: number;
-  movementStyle: 'wander' | 'pulse' | 'scuttle' | 'glide' | 'float';
 }
 
 const ENTITY_TYPES: EntityTrait[] = [
-  { type: 'tropical', emoji: '🐠', stiffness: 10, damping: 55, mass: 1.2, sizeScale: 0.9, movementStyle: 'wander' },
-  { type: 'puffer', emoji: '🐡', stiffness: 7, damping: 45, mass: 3, sizeScale: 1.1, movementStyle: 'wander' },
-  { type: 'blue', emoji: '🐟', stiffness: 9, damping: 50, mass: 1.5, sizeScale: 1, movementStyle: 'wander' },
-  { type: 'shrimp', emoji: '🦐', stiffness: 18, damping: 30, mass: 1, sizeScale: 0.7, movementStyle: 'scuttle' },
-  { type: 'jellyfish', emoji: '🪼', stiffness: 3.5, damping: 28, mass: 2.5, sizeScale: 1.2, movementStyle: 'pulse' },
-  { type: 'octopus', emoji: '🐙', stiffness: 5, damping: 60, mass: 3, sizeScale: 1.3, movementStyle: 'glide' },
-  { type: 'crab', emoji: '🦀', stiffness: 15, damping: 40, mass: 2, sizeScale: 0.75, movementStyle: 'scuttle' },
-  { type: 'whale', emoji: '🐋', stiffness: 2.5, damping: 75, mass: 8, sizeScale: 2.2, movementStyle: 'glide' },
+  { type: 'tropical', emoji: '🐠', stiffness: 10, damping: 55, mass: 1.2, sizeScale: 0.9 },
+  { type: 'puffer',   emoji: '🐡', stiffness: 7,  damping: 45, mass: 3,   sizeScale: 1.1 },
+  { type: 'blue',     emoji: '🐟', stiffness: 9,  damping: 50, mass: 1.5, sizeScale: 1.0 },
+  { type: 'jellyfish',emoji: '🪼', stiffness: 3,  damping: 28, mass: 2.5, sizeScale: 1.2 },
+  { type: 'octopus',  emoji: '🐙', stiffness: 5,  damping: 60, mass: 3,   sizeScale: 1.3 },
 ];
 
 interface EntityInstance extends EntityTrait {
@@ -35,7 +29,6 @@ interface EntityInstance extends EntityTrait {
   targetY: number;
   growth: number;
   aiState: AIState;
-  swarmOffset: { x: number, y: number };
 }
 
 interface BaitState {
@@ -46,395 +39,345 @@ interface BaitState {
   motionY: MotionValue<number>;
 }
 
-interface RippleState {
-  id: number;
-  x: number;
-  y: number;
-}
-
 interface AquariumOverlayProps {
   pullProgress: MotionValue<number>;
   feedTrigger: number;
   onBaitEaten?: () => void;
 }
 
-const Bubble: React.FC = () => {
-    const size = useMemo(() => 2 + Math.random() * 4, []);
-    const delay = useMemo(() => Math.random() * 20, []);
-    const duration = useMemo(() => 8 + Math.random() * 8, []);
-    const initialX = useMemo(() => Math.random() * 350, []);
-    const drift = useMemo(() => (Math.random() - 0.5) * 30, []);
-  
-    return (
-      <motion.div 
-        initial={{ y: 140, x: initialX, opacity: 0 }} 
-        animate={{ y: -40, x: [initialX, initialX + drift, initialX], opacity: [0, 0.7, 0] }}
-        transition={{ duration, repeat: Infinity, delay, ease: "linear" }}
-        className="absolute bg-white/20 border border-white/40 rounded-full"
-        style={{ width: size, height: size }}
-      />
-    );
-};
+const AQUARIUM_HEIGHT = 120;
 
-const Seabed: React.FC = () => {
-    const elements = useMemo(() => [
-      { emoji: '🪨', size: 28, left: '15%', bottom: 5, rotate: -15, z: 1 },
-      { emoji: '🪨', size: 20, left: '25%', bottom: 2, rotate: 10, z: 3 },
-      { emoji: '🪨', size: 35, left: '70%', bottom: 8, rotate: 5, z: 1 },
-      { emoji: '🪸', size: 30, left: '80%', bottom: 4, rotate: -5, z: 2 },
-      { emoji: '🪸', size: 25, left: '5%', bottom: 3, rotate: 10, z: 2 },
-      { emoji: '🌿', size: 22, left: '40%', bottom: 2, rotate: -8, z: 2 },
-      { emoji: '🌿', size: 26, left: '55%', bottom: 3, rotate: 12, z: 1 },
-      { emoji: '🌿', size: 20, left: '90%', bottom: 1, rotate: -5, z: 3 },
-    ], []);
+// Individual fish entity with spring-based movement
+// Speed multiplier based on AI state: chasing = faster movement
+const FishEntity: React.FC<{ entity: EntityInstance }> = ({ entity }) => {
+  const isChasing = entity.aiState === 'chasing';
+  // When chasing, increase stiffness for faster response
+  const speedMultiplier = isChasing ? 3 : 1;
+  const springConfig = useMemo(() => ({ 
+    stiffness: entity.stiffness * speedMultiplier, 
+    damping: entity.damping * (isChasing ? 0.8 : 1), 
+    mass: entity.mass 
+  }), [entity.stiffness, entity.damping, entity.mass, speedMultiplier, isChasing]);
   
-    return (
-      <div className="absolute bottom-0 left-0 right-0 h-11 z-1 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#f0d9b5] via-[#e4ceb1] to-transparent opacity-80" />
-        <div className="absolute inset-0 top-[50%] bg-[#e4ceb1] opacity-90" />
-        {elements.map((el, i) => (
-          <motion.span
-            key={i} className="absolute"
-            initial={{ y: 5, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 + i * 0.05 }}
-            style={{ fontSize: el.size, left: el.left, bottom: el.bottom, transform: `rotate(${el.rotate}deg)`, zIndex: el.z, filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.1))' }}
-          >
-            {el.emoji}
-          </motion.span>
-        ))}
-      </div>
-    );
-};
+  const springX = useSpring(entity.x, springConfig);
+  const springY = useSpring(entity.y, springConfig);
+  const prevX = useRef(entity.targetX);
+  const [scaleXValue, setScaleXValue] = useState(1);
 
-const Bait: React.FC<{ bait: BaitState; onStateChange: (id: number, status: BaitState['status']) => void }> = ({ bait, onStateChange }) => {
+  useEffect(() => { springX.set(entity.targetX); }, [entity.targetX, springX]);
+  useEffect(() => { springY.set(entity.targetY); }, [entity.targetY, springY]);
+
+  // Update scaleX based on direction of movement
+  useEffect(() => {
+    const unsubscribe = springX.on('change', (x: number) => {
+      const dir = x > prevX.current ? -1 : 1;
+      prevX.current = x;
+      setScaleXValue(dir);
+    });
+    return () => unsubscribe();
+  }, [springX]);
+
+  const fontSize = `${22 * entity.sizeScale * entity.growth}px`;
+
   return (
     <motion.div
-      initial={{ y: -40, scale: 0 }}
-      animate={{ y: 30, scale: 1.2 }}
-      transition={{ type: "spring", stiffness: 200, damping: 15 }}
-      onAnimationComplete={() => {
-        onStateChange(bait.id, 'sinking');
+      className="absolute select-none pointer-events-none"
+      style={{ 
+        x: springX, 
+        y: springY, 
+        scaleX: scaleXValue,
+        fontSize
       }}
-      className="absolute z-20 text-[28px] drop-shadow-2xl" 
-      style={{ left: bait.x, y: bait.motionY }}
     >
-      <motion.div
-        initial={{ y: 0 }}
-        animate={bait.status === 'sinking' ? { y: 54 } : {}}
-        transition={bait.status === 'sinking' ? { type: "tween", duration: 8, ease: "linear" } : {}}
-      >
+      {entity.emoji}
+    </motion.div>
+  );
+};
+
+// Bait cookie
+const Bait: React.FC<{ bait: BaitState; onStateChange: (id: number, status: BaitState['status']) => void }> = ({ bait, onStateChange }) => {
+  const sinkY = useSpring(10, { stiffness: 5, damping: 20 });
+  
+  useEffect(() => {
+    if (bait.status === 'sinking') {
+      sinkY.set(AQUARIUM_HEIGHT - 20);
+    }
+  }, [bait.status, sinkY]);
+  
+  // Sync sinkY to bait.motionY for collision detection
+  useEffect(() => {
+    const unsubscribe = sinkY.on('change', (v: number) => {
+      bait.motionY.set(v);
+    });
+    return () => unsubscribe();
+  }, [sinkY, bait.motionY]);
+
+  if (bait.status === 'eaten') return null;
+
+  return (
+    <motion.div
+      initial={{ y: -30, scale: 0 }}
+      animate={{ y: 10, scale: 1.1 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+      onAnimationComplete={() => onStateChange(bait.id, 'sinking')}
+      className="absolute z-20 text-[22px] drop-shadow"
+      style={{ left: bait.x }}
+    >
+      <motion.div style={{ y: sinkY }}>
         🍪
       </motion.div>
     </motion.div>
   );
 };
 
-
-const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTrigger, onBaitEaten }) => {
-  const [entities, setEntities] = useState<EntityInstance[]>([]);
-  const [baits, setBaits] = useState<BaitState[]>([]);
-  const [ripples, setRipples] = useState<RippleState[]>([]);
-  const lastFeedTrigger = useRef(feedTrigger);
-  const aquariumOpacity = useTransform(pullProgress, [0, 0.1], [0, 1]);
-  const [feedCount, setFeedCount] = useState(2345);
-  const processingBaitRef = useRef(new Set());
-
-
-  useMotionValueEvent(pullProgress, "change", (latest) => {
-    if (latest < 0.05 && baits.length > 0) {
-      setBaits([]);
-    }
-  });
-
-  useEffect(() => {
-    const initialEntities = Array.from({ length: 14 }).map((_, i): EntityInstance => {
-      const trait = ENTITY_TYPES[i % ENTITY_TYPES.length];
-      const startX = 10 + Math.random() * 335;
-      const startY = trait.movementStyle === 'scuttle' ? 90 + Math.random() * 5 : 30 + Math.random() * 50;
-      
-      return { ...trait, id: i, x: startX, y: startY, targetX: startX, targetY: startY, growth: 1.0, aiState: 'wandering', swarmOffset: { x: (Math.random() - 0.5) * 40, y: (Math.random() - 0.5) * 40 } };
-    });
-    setEntities(initialEntities);
-  }, []);
-
-  useEffect(() => {
-    if (feedTrigger > lastFeedTrigger.current) {
-      lastFeedTrigger.current = feedTrigger;
-      const startX = Math.random() > 0.5 ? 40 + Math.random() * 70 : 245 + Math.random() * 70;
-      const newBait: BaitState = { id: Date.now(), x: startX, y: -40, status: 'dropping', motionY: motionValue(-40) };
-      setBaits(prev => [...prev, newBait]);
-      
-      setTimeout(() => {
-        setRipples(prev => [...prev, { id: newBait.id, x: startX, y: 30 }]);
-      }, 800);
-    }
-  }, [feedTrigger]);
-
-  // Fish AI: Wandering behavior
-  useEffect(() => {
-    const wanderInterval = setInterval(() => {
-      setEntities(prev => prev.map(e => {
-        if (e.aiState === 'wandering' && Math.random() > 0.7) {
-          const nTx = 10 + Math.random() * 335;
-          const nTy = e.movementStyle === 'scuttle' ? 90 + Math.random() * 5 : 30 + Math.random() * 50;
-          return { ...e, targetX: nTx, targetY: nTy };
-        }
-        return e;
-      }));
-    }, 1500);
-    return () => clearInterval(wanderInterval);
-  }, []);
-  
-  // Fish AI: Separation behavior to avoid clumping
-  useEffect(() => {
-    const REPEL_STRENGTH = 0.8;
-    const separationInterval = setInterval(() => {
-        setEntities(currentEntities => {
-            const updatedEntities = currentEntities.map(e => ({ ...e }));
-
-            for (let i = 0; i < updatedEntities.length; i++) {
-                for (let j = i + 1; j < updatedEntities.length; j++) {
-                    const entity1 = updatedEntities[i];
-                    const entity2 = updatedEntities[j];
-
-                    const dx = entity1.targetX - entity2.targetX;
-                    const dy = entity1.targetY - entity2.targetY;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    // Required distance is based on their combined size
-                    const requiredDistance = (entity1.sizeScale + entity2.sizeScale) * 16;
-
-                    if (distance < requiredDistance && distance > 0) {
-                        const overlap = requiredDistance - distance;
-                        const force = overlap * REPEL_STRENGTH;
-
-                        const moveX = (dx / distance) * force * 0.5;
-                        const moveY = (dy / distance) * force * 0.5;
-                        
-                        const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
-
-                        // Apply repulsion to targets
-                        entity1.targetX = clamp(entity1.targetX + moveX, 10, 345);
-                        const newTargetY1 = entity1.targetY + moveY;
-                        entity1.targetY = entity1.movementStyle === 'scuttle' ? clamp(newTargetY1, 90, 95) : clamp(newTargetY1, 30, 85);
-
-                        entity2.targetX = clamp(entity2.targetX - moveX, 10, 345);
-                        const newTargetY2 = entity2.targetY - moveY;
-                        entity2.targetY = entity2.movementStyle === 'scuttle' ? clamp(newTargetY2, 90, 95) : clamp(newTargetY2, 30, 85);
-                    }
-                }
-            }
-            return updatedEntities;
-        });
-    }, 100); // Run frequently for smooth avoidance
-
-    return () => clearInterval(separationInterval);
-  }, []);
-
-  const handleBaitStateChange = useCallback((id: number, status: BaitState['status']) => {
-    setBaits(prev => prev.map(b => b.id === id ? { ...b, status } : b));
-    if (status === 'sinking') {
-       // Alert nearby fish
-       setEntities(prevEntities => prevEntities.map(e => {
-        const bait = baits.find(b => b.id === id);
-        if (!bait) return e;
-        const distance = Math.sqrt(Math.pow(e.x - bait.x, 2) + Math.pow(e.y - 30, 2));
-        if (distance < 150) {
-          return { ...e, aiState: 'perceiving' };
-        }
-        return e;
-      }));
-    }
-  }, [baits]);
-
-  const handleChompAttempt = useCallback((entityId: number, baitId: number) => {
-    // Lock: Check if bait is already being eaten. If so, exit.
-    if (processingBaitRef.current.has(baitId)) {
-      return;
-    }
-    
-    // Double-check if the bait is available in the current rendered state.
-    const isBaitAvailable = baits.some(b => b.id === baitId && b.status === 'sinking');
-    if (!isBaitAvailable) {
-      return;
-    }
-
-    // Acquire lock: Mark this bait as being processed.
-    processingBaitRef.current.add(baitId);
-
-    // This block now runs only ONCE per bait.
-    onBaitEaten?.();
-    setFeedCount(prev => prev + 1);
-    
-    // Update bait state to 'eaten'.
-    setBaits(prev => prev.map(b => b.id === baitId ? { ...b, status: 'eaten' } : b));
-    
-    // Schedule the removal of the bait and release the lock.
-    setTimeout(() => {
-      setBaits(prev => prev.filter(b => b.id !== baitId));
-      processingBaitRef.current.delete(baitId);
-    }, 500);
-
-    // Update entity states after the successful chomp.
-    setEntities(prev => prev.map(e => {
-      if (e.id === entityId) return { ...e, aiState: 'celebrating', growth: e.growth + 0.1 };
-      // Other fish that were chasing become confused.
-      if (e.aiState === 'chasing') {
-        const newTargetX = 10 + Math.random() * 335;
-        const newTargetY = e.movementStyle === 'scuttle' ? 90 + Math.random() * 5 : 30 + Math.random() * 50;
-        // Schedule their return to wandering state.
-        setTimeout(() => setEntities(current => current.map(en => en.id === e.id ? { ...en, aiState: 'wandering' } : en)), 500 + Math.random() * 300);
-        return { ...e, aiState: 'confused', targetX: newTargetX, targetY: newTargetY };
-      }
-      return e;
-    }));
-
-    // The winning fish returns to wandering after celebrating.
-    setTimeout(() => setEntities(prev => prev.map(e => e.id === entityId ? { ...e, aiState: 'wandering' } : e)), 2000);
-  }, [baits, onBaitEaten]);
-
-
+// Bottom coral/seaweed decorations - no sand, just plants
+const BottomDecorations: React.FC = () => {
+  const decorations = useMemo(() => [
+    { emoji: '🪸', size: 24, left: '3%' },
+    { emoji: '🌿', size: 20, left: '12%' },
+    { emoji: '🌿', size: 18, left: '60%' },
+    { emoji: '🪸', size: 28, left: '82%' },
+    { emoji: '🌿', size: 16, left: '93%' },
+  ], []);
   return (
-    <motion.div 
-      className="absolute top-0 left-0 right-0 z-0 pointer-events-none overflow-hidden"
-      style={{ height: '140px', opacity: aquariumOpacity }}
-    >
-      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(25px) saturate(180%) brightness(1.2)', WebkitBackdropFilter: 'blur(25px) saturate(180%) brightness(1.2)', boxShadow: 'inset 0 0 12px rgba(255,255,255,0.08)', border: '1px solid', borderImageSource: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.2) 100%)', borderImageSlice: 1 }}/>
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-blue-500 to-indigo-600 opacity-75" />
-      <motion.div className="absolute inset-0 opacity-40 mix-blend-soft-light" style={{ background: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.4), transparent 40%), radial-gradient(circle at 80% 60%, rgba(255,255,255,0.3), transparent 35%)', backgroundSize: '300% 300%' }} animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }} transition={{ duration: 25, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }} />
-      <div className="absolute inset-0 opacity-25">{Array.from({ length: 4 }).map((_, i) => (<motion.div key={`ray-${i}`} className="absolute top-[-20%] w-[25%] h-[150%] bg-white/20 blur-[50px] skew-x-[-10deg]" style={{ left: `${i * 30}%` }} animate={{ opacity: [0.1, 0.4, 0.1], x: [-20, 20, -20] }} transition={{ duration: 10 + i * 2.5, repeat: Infinity, ease: "easeInOut" }}/>))}</div>
-      
-      {/* Gradient Scrim */}
-      <div className="absolute -bottom-6 left-0 right-0 h-6 bg-gradient-to-t from-black/20 to-transparent z-20" />
-
-      {/* Counter */}
-      <div className="absolute bottom-2 right-5 z-30 flex flex-col items-end gap-1 text-white">
-        <div className="text-[10px] font-bold opacity-70 uppercase tracking-wider">
-            Total Fed
+    <>
+      {decorations.map((d, i) => (
+        <div key={i} className="absolute bottom-0 z-10 select-none pointer-events-none" style={{ fontSize: d.size, left: d.left }}>
+          {d.emoji}
         </div>
-        <TickingCounter count={feedCount} />
-      </div>
-
-      <AnimatePresence>
-        {ripples.map(r => (
-          <motion.div
-            key={r.id}
-            className="absolute rounded-full border-2 border-white/80"
-            initial={{ x: r.x - 10, y: r.y - 10, width: 20, height: 20, opacity: 1 }}
-            animate={{ width: 80, height: 80, x: r.x - 40, y: r.y - 40, opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            onAnimationComplete={() => setRipples(prev => prev.filter(pr => pr.id !== r.id))}
-          />
-        ))}
-      </AnimatePresence>
-      <AnimatePresence>
-        {baits.map(bait => bait.status !== 'eaten' && <Bait key={bait.id} bait={bait} onStateChange={handleBaitStateChange} />)}
-      </AnimatePresence>
-      <Seabed />
-      {entities.map((e) => (<Entity key={e.id} data={e} baits={baits} onChompAttempt={handleChompAttempt} onPerceptionComplete={(id) => setEntities(current => current.map(en => en.id === id ? { ...en, aiState: 'chasing' } : en))}/>))}
-      {Array.from({ length: 25 }).map((_, i) => <Bubble key={i} />)}
-      <div className="absolute inset-0 z-50 pointer-events-none" style={{ background: 'radial-gradient(circle at 50% 0%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 60%)' }}/>
-    </motion.div>
+      ))}
+    </>
   );
 };
 
-const Entity: React.FC<{ 
-  data: EntityInstance; 
-  baits: BaitState[];
-  onChompAttempt: (entityId: number, baitId: number) => void; 
-  onPerceptionComplete: (id: number) => void;
-}> = ({ data, baits, onChompAttempt, onPerceptionComplete }) => {
-  const lastX = useRef(data.x);
-  const [flip, setFlip] = useState(1);
+const AquariumOverlay: React.FC<AquariumOverlayProps> = ({ pullProgress, feedTrigger, onBaitEaten }) => {
+  const aquariumOpacity = useTransform(pullProgress, [0, 0.15], [0, 1]);
+  const lastFeedTrigger = useRef(0);
 
-  const targetBait = useMemo(() => {
-    const sinkingBaits = baits.filter(b => b.status === 'sinking');
-    if (sinkingBaits.length === 0) return null;
-    // Find the closest sinking bait
-    let closestBait = sinkingBaits[0];
-    let minDistance = Infinity;
-    for (const bait of sinkingBaits) {
-      const distance = Math.sqrt(Math.pow(bait.x - data.x, 2) + Math.pow(bait.motionY.get() - data.y, 2));
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestBait = bait;
-      }
-    }
-    return closestBait;
-  }, [baits, data.x, data.y]);
-  
-  const isChasing = data.aiState === 'chasing' && targetBait;
+  const [entities, setEntities] = useState<EntityInstance[]>([]);
+  const [baits, setBaits] = useState<BaitState[]>([]);
 
-  const chasingStiffnessMultiplier = useMemo(() => 2.0 + Math.random() * 1.5, []);
-  const chasingDampingMultiplier = useMemo(() => 0.6 + Math.random() * 0.3, []);
-
-  const springConfig = useMemo(() => ({
-    stiffness: isChasing ? data.stiffness * chasingStiffnessMultiplier : data.stiffness,
-    damping: isChasing ? data.damping * chasingDampingMultiplier : data.damping,
-    mass: data.mass,
-  }), [isChasing, data.stiffness, data.damping, data.mass, chasingStiffnessMultiplier, chasingDampingMultiplier]);
-
-  const targetX = useMotionValue(data.x);
-  const targetY = useMotionValue(data.y);
-
-  const motionX = useSpring(targetX, springConfig);
-  const motionY = useSpring(targetY, springConfig);
-  
+  // Init fish
   useEffect(() => {
-    let unsubscribeY: (()=>void)|undefined;
-    if (isChasing && targetBait) {
-      targetX.set(targetBait.x + data.swarmOffset.x);
-      targetY.set(targetBait.motionY.get() + data.swarmOffset.y);
-      unsubscribeY = targetBait.motionY.onChange((latestBaitY) => {
-        targetY.set(latestBaitY + data.swarmOffset.y);
+    const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+    const initial = Array.from({ length: 8 }).map((_, i): EntityInstance => {
+      const trait = ENTITY_TYPES[i % ENTITY_TYPES.length];
+      const startX = 20 + Math.random() * (containerWidth - 60);
+      const startY = 10 + Math.random() * (AQUARIUM_HEIGHT - 40);
+      return { ...trait, id: i, x: startX, y: startY, targetX: startX, targetY: startY, growth: 1.0, aiState: 'wandering' };
+    });
+    setEntities(initial);
+  }, []);
+
+  // Wander behavior
+  useEffect(() => {
+    const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+    const interval = setInterval(() => {
+      setEntities(prev => prev.map(e => {
+        if (e.aiState === 'wandering' && Math.random() > 0.65) {
+          return {
+            ...e,
+            targetX: 10 + Math.random() * (containerWidth - 40),
+            targetY: 8 + Math.random() * (AQUARIUM_HEIGHT - 36),
+          };
+        }
+        return e;
+      }));
+    }, 1600);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Separation behavior
+  useEffect(() => {
+    const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+    const interval = setInterval(() => {
+      setEntities(prev => {
+        const updated = prev.map(e => ({ ...e }));
+        for (let i = 0; i < updated.length; i++) {
+          for (let j = i + 1; j < updated.length; j++) {
+            const a = updated[i], b = updated[j];
+            const dx = a.targetX - b.targetX;
+            const dy = a.targetY - b.targetY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const minDist = (a.sizeScale + b.sizeScale) * 18;
+            if (dist < minDist && dist > 0) {
+              const force = ((minDist - dist) / minDist) * 0.6;
+              const nx = (dx / dist) * force;
+              const ny = (dy / dist) * force;
+              const clampX = (v: number) => Math.max(10, Math.min(v, containerWidth - 40));
+              const clampY = (v: number) => Math.max(8, Math.min(v, AQUARIUM_HEIGHT - 36));
+              a.targetX = clampX(a.targetX + nx * 10);
+              a.targetY = clampY(a.targetY + ny * 10);
+              b.targetX = clampX(b.targetX - nx * 10);
+              b.targetY = clampY(b.targetY - ny * 10);
+            }
+          }
+        }
+        return updated;
       });
-    } else {
-      targetX.set(data.targetX);
-      targetY.set(data.targetY);
-    }
-    return () => { unsubscribeY?.() };
-  }, [data.aiState, data.targetX, data.targetY, targetBait, isChasing, targetX, targetY, data.swarmOffset]);
-  
-  useMotionValueEvent(motionX, "change", (latest) => {
-    if (latest > lastX.current + 0.1) setFlip(1);
-    else if (latest < lastX.current - 0.1) setFlip(-1);
-    lastX.current = latest;
-  });
-  
-  useEffect(() => {
-    if (isChasing && targetBait) {
-      const checkDistance = () => {
-        const dist = Math.sqrt(Math.pow(targetBait.x - motionX.get(), 2) + Math.pow(targetBait.motionY.get() - motionY.get(), 2));
-        if (dist < 18) { onChompAttempt(data.id, targetBait.id) }
-      };
-      const unsubscribes = [motionX.onChange(checkDistance), motionY.onChange(checkDistance), targetBait.motionY.onChange(checkDistance)];
-      return () => { unsubscribes.forEach(unsubscribe => unsubscribe()); };
-    }
-  }, [isChasing, targetBait, motionX, motionY, onChompAttempt, data.id]);
+    }, 120);
+    return () => clearInterval(interval);
+  }, []);
 
-  const cosmeticVariants: Variants = {
-    perceiving: { rotate: [0, 2, -2, 2, 0], scale: [1, 1.05, 1], transition: { duration: 0.3 } },
-    chasing: { rotate: [0, -5, 5, -5, 0], transition: { duration: 0.4, repeat: Infinity } },
-    celebrating: { rotate: [0, -15, 15, -15, 0], scale: [1, 1.2, 1], transition: { duration: 0.6 } },
-    confused: { rotate: [0, 5, -5, 0], transition: { duration: 0.5, repeat: Infinity, repeatType: "reverse" } },
-    wandering: { x: 0, rotate: 0, scale: 1 }
-  };
+  // Feed bait drop
+  useEffect(() => {
+    if (feedTrigger <= lastFeedTrigger.current) return;
+    lastFeedTrigger.current = feedTrigger;
+    const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+    const baitX = 40 + Math.random() * (containerWidth - 100);
+    const newBait: BaitState = { id: Date.now(), x: baitX, y: -30, status: 'dropping', motionY: motionValue(-30) };
+    setBaits(prev => [...prev, newBait]);
+
+    // Fish chase bait
+    setEntities(prev => prev.map(e => ({
+      ...e,
+      aiState: 'chasing',
+      targetX: baitX + (Math.random() - 0.5) * 30,
+      targetY: 15 + Math.random() * 30,
+    })));
+  }, [feedTrigger]);
+
+  const handleBaitStateChange = useCallback((id: number, status: BaitState['status']) => {
+    setBaits(prev => prev.map(b => b.id === id ? { ...b, status } : b));
+  }, []);
+
+  // Collision detection: check if any fish is close enough to eat the bait
+  useEffect(() => {
+    if (baits.length === 0) return;
+    
+    const checkCollision = setInterval(() => {
+      setBaits(prevBaits => {
+        const newBaits = [...prevBaits];
+        let baitEaten = false;
+        let eatenBaitId: number | null = null;
+        
+        for (const bait of newBaits) {
+          if (bait.status === 'eaten') continue;
+          
+          // Get current bait Y position (starts at bait.y, sinks over time)
+          const baitY = bait.motionY.get();
+          
+          for (const entity of entities) {
+            const dx = entity.targetX - bait.x;
+            const dy = entity.targetY - baitY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            // If fish is within 25px of bait, eat it
+            if (distance < 25 && bait.status === 'sinking') {
+              bait.status = 'eaten';
+              baitEaten = true;
+              eatenBaitId = bait.id;
+              break;
+            }
+          }
+        }
+        
+        if (baitEaten && eatenBaitId !== null) {
+          // Remove eaten bait after short delay for visual feedback
+          setTimeout(() => {
+            setBaits(prev => prev.filter(b => b.id !== eatenBaitId));
+            onBaitEaten?.();
+            
+            const containerWidth = typeof window !== 'undefined' ? Math.min(window.innerWidth, 430) : 350;
+            setEntities(prev => prev.map((e, i) => ({
+              ...e,
+              aiState: 'wandering',
+              growth: i === 0 ? e.growth + 0.08 : e.growth,
+              targetX: 10 + Math.random() * (containerWidth - 40),
+              targetY: 8 + Math.random() * (AQUARIUM_HEIGHT - 36),
+            })));
+          }, 200);
+        }
+        
+        return newBaits;
+      });
+    }, 100);
+    
+    return () => clearInterval(checkCollision);
+  }, [baits.length, entities, onBaitEaten]);
 
   return (
     <motion.div
-      className="absolute select-none"
-      style={{ x: motionX, y: motionY, zIndex: 10, scale: data.growth }}
+      className="absolute top-0 left-0 right-0 z-0 overflow-hidden"
+      style={{ height: AQUARIUM_HEIGHT, opacity: aquariumOpacity }}
     >
-      <motion.div
-        variants={cosmeticVariants}
-        animate={data.aiState}
-        onAnimationComplete={(definition) => {
-          if (definition === 'perceiving') onPerceptionComplete(data.id);
-        }}
-        style={{ fontSize: `${20 * data.sizeScale}px`, transform: `scaleX(${flip})`, filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.2))" }}
-      >
-        <span className="relative">{data.emoji}</span>
-      </motion.div>
+      {/* Ocean gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#daf0fc] via-[#c2e8f8] to-[#a8dcf4]" />
+
+      {/* Subtle light rays */}
+      {[0.15, 0.45, 0.75].map((pos, i) => (
+        <motion.div
+          key={i}
+          className="absolute top-0 h-full w-[18%] bg-gradient-to-b from-white/30 to-transparent blur-2xl"
+          style={{ left: `${pos * 100}%` }}
+          animate={{ opacity: [0.15, 0.4, 0.15] }}
+          transition={{ duration: 5 + i * 1.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.8 }}
+        />
+      ))}
+
+      {/* Fish entities */}
+      {entities.map(e => <FishEntity key={e.id} entity={e} />)}
+
+      {/* Bait */}
+      {baits.map(b => <Bait key={b.id} bait={b} onStateChange={handleBaitStateChange} />)}
+
+      {/* Bottom plants (no sand) */}
+      <BottomDecorations />
+
+      {/* Liquid glass edge refraction effect - thicker edges for visible glass depth */}
+      <div className="absolute inset-0 z-30 pointer-events-none">
+        {/* Top glass edge - thick refraction band with multiple layers */}
+        <div className="absolute top-0 left-0 right-0 h-[14px]">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-b from-white/80 to-white/40" />
+          <div className="absolute top-[3px] left-0 right-0 h-[1px] bg-white/90" />
+        </div>
+        
+        {/* Left edge refraction - wider with inner highlight */}
+        <div className="absolute top-[14px] left-0 bottom-[16px] w-[10px]">
+          <div className="absolute inset-0 bg-gradient-to-r from-white/50 via-white/20 to-transparent" />
+          <div className="absolute top-0 left-0 bottom-0 w-[2px] bg-gradient-to-r from-white/70 to-white/30" />
+        </div>
+        
+        {/* Right edge refraction - wider with inner highlight */}
+        <div className="absolute top-[14px] right-0 bottom-[16px] w-[10px]">
+          <div className="absolute inset-0 bg-gradient-to-l from-white/50 via-white/20 to-transparent" />
+          <div className="absolute top-0 right-0 bottom-0 w-[2px] bg-gradient-to-l from-white/70 to-white/30" />
+        </div>
+        
+        {/* Bottom glass edge - thickest for depth, mimics glass tank bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-[16px]">
+          <div className="absolute inset-0 bg-gradient-to-t from-white/70 via-white/35 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-[4px] bg-gradient-to-t from-white/90 to-white/50" />
+          <div className="absolute bottom-[4px] left-0 right-0 h-[1px] bg-white/80" />
+        </div>
+        
+        {/* Corner highlights - larger for visible glass thickness */}
+        <div className="absolute top-0 left-0 w-[20px] h-[20px] bg-gradient-to-br from-white/70 via-white/30 to-transparent rounded-br-[8px]" />
+        <div className="absolute top-0 right-0 w-[20px] h-[20px] bg-gradient-to-bl from-white/70 via-white/30 to-transparent rounded-bl-[8px]" />
+        <div className="absolute bottom-0 left-0 w-[20px] h-[20px] bg-gradient-to-tr from-white/60 via-white/25 to-transparent rounded-tr-[8px]" />
+        <div className="absolute bottom-0 right-0 w-[20px] h-[20px] bg-gradient-to-tl from-white/60 via-white/25 to-transparent rounded-tl-[8px]" />
+        
+        {/* Glass surface reflection - diagonal highlight */}
+        <div className="absolute top-[10px] left-[15%] w-[30%] h-[2px] bg-gradient-to-r from-transparent via-white/50 to-transparent transform -rotate-[8deg]" />
+        
+        {/* Animated light shimmer across glass surface */}
+        <motion.div
+          className="absolute left-[10px] right-[10px] h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent"
+          style={{ top: '30%' }}
+          animate={{ opacity: [0.2, 0.6, 0.2], x: [-10, 10, -10] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute left-[10px] right-[10px] h-[1px] bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          style={{ top: '55%' }}
+          animate={{ opacity: [0.15, 0.4, 0.15], x: [5, -5, 5] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
+        />
+        
+        {/* Inner shadow for glass depth */}
+        <div className="absolute inset-[10px] border border-white/10 rounded-[4px] pointer-events-none" />
+      </div>
     </motion.div>
   );
 };
